@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+    db:
+      image: postgres:15-alpine
+      container_name: postgres_db
+      restart: always
+      environment:
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASSWORD}
+        - POSTGRES_DB=${DB_NAME}
+      # Ограничиваем аппетиты Postgres на уровне движка
+      command: >
+        postgres
+        -c 'shared_buffers=128MB'
+        -c 'max_connections=50'
+        -c 'work_mem=4MB'
+        -c 'maintenance_work_mem=32MB'
+      ports:
+        - "5432:5432" # Пробрасываем порт наружу
+      env_file:
+        - .env
+      healthcheck: # Проверка, что база реально готова
+        test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+      deploy:
+        resources:
+          limits:
+            memory: 512M # Жесткий лимит для Docker
+      volumes:
+        - pg_data:/var/lib/postgresql/data
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "10m"
+          max-file: "3"
+      networks:
+        - internal_net
+
+    app:
+      image: ghcr.io/maximtretjakov/nofelet-web:latest
+      container_name: signaling_server
+      restart: always
+      ports:
+          - "8080:8080" # Внешний порт : Порт внутри контейнера
+      env_file:
+          - .env
+      volumes:
+        - /etc/letsencrypt:/etc/letsencrypt:ro
+      deploy:
+        resources:
+          limits:
+            memory: 384M
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "10m"
+          max-file: "3"
+      networks:
+        - internal_net
+
+networks:
+  internal_net:
+    driver: bridge
