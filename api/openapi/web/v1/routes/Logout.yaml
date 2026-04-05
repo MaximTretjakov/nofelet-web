@@ -1,0 +1,25 @@
+paths:
+  Logout:
+    put:
+      tags:
+        - Авторизация
+      security:
+        - BearerAuth: [ ]
+      summary: Выход из профиля
+      description: Выход из профиля, получение гостевого токена.
+      operationId: Logout
+      parameters:
+        - $ref: "#/parameters/RefreshToken"
+      responses:
+        "201":
+          $ref: "../responses/auth/PutLogoutResponse.yaml#/PutLogoutResponse"
+        "400":
+          $ref: "../responses/errors/ErrorCodes.yaml#/BadRequest"
+
+parameters:
+  RefreshToken:
+    name: refreshToken
+    in: query
+    required: true
+    schema:
+      type: string

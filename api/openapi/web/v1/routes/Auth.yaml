@@ -1,0 +1,13 @@
+paths:
+  Auth:
+    post:
+      tags:
+        - Авторизация
+      security:
+        - BearerAuth: []
+      summary: Анонимная авторизация
+      description: Регистрация анонимного пользователя
+      operationId: Auth
+      responses:
+        "201":
+          $ref: "../responses/auth/PostAuth.yaml#/PostAuthResponse"

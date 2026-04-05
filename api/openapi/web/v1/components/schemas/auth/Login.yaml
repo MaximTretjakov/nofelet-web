@@ -1,0 +1,9 @@
+Login:
+  required: [ city, token, user ]
+  properties:
+    city:
+      $ref: './AuthCity.yaml#/AuthCity'
+    token:
+      $ref: './AuthToken.yaml#/AuthToken'
+    user:
+      $ref: './AuthUserShort.yaml#/AuthAnonymousShort'

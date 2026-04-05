@@ -1,0 +1,11 @@
+ErrorResponseWithMessage:
+  description: Простая ошибка
+  properties:
+    message:
+      type: string
+      description: Текст ошибки
+      example: Текст ошибки
+    requestId:
+      type: string
+      description: ID запроса
+      example: a5c88f1791c15af61341b1282217b8a8

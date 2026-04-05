@@ -1,0 +1,9 @@
+PutLogoutResponse:
+  description: OK
+  content:
+    application/json:
+      schema:
+        required: [data]
+        properties:
+          data:
+            $ref: '../../components/schemas/auth/AuthToken.yaml#/AuthToken'

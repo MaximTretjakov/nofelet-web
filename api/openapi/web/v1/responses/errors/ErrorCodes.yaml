@@ -1,0 +1,60 @@
+BadRequest:
+  description: Неправильные параметры запроса
+  content:
+    application/json:
+      schema:
+        type: object
+        $ref: "./ErrorResponseWithMessage.yaml#/ErrorResponseWithMessage"
+
+Unauthorized:
+  description: Неавторизован
+  content:
+    application/json:
+      schema:
+        type: object
+        $ref: "./ErrorResponseWithMessage.yaml#/ErrorResponseWithMessage"
+
+InternalServerError:
+  description: Внутренняя ошибка сервера
+  content:
+    application/json:
+      schema:
+        type: object
+        $ref: "./ErrorResponseWithMessage.yaml#/ErrorResponseWithMessage"
+
+Forbidden:
+  description: Доступ запрещен
+  content:
+    application/json:
+      schema:
+        type: object
+        description: Пользователь не авторизован
+        properties:
+          message:
+            type: string
+            description: Текст ошибки
+            example: Текст ошибки
+
+GatewayTimeout:
+  description: Gateway Time Out
+  content:
+    application/json:
+      schema:
+        type: object
+        $ref: "./ErrorResponseWithMessage.yaml#/ErrorResponseWithMessage"
+
+NotFound:
+  description: Не найден
+  content:
+    application/json:
+      schema:
+        type: object
+        $ref: "./ErrorResponseWithMessage.yaml#/ErrorResponseWithMessage"
+
+UnprocessableEntity:
+  description: Unprocessable Entity
+  content:
+    application/json:
+      schema:
+        type: object
+        $ref: "./ErrorResponseWithMessage.yaml#/ErrorResponseWithMessage"

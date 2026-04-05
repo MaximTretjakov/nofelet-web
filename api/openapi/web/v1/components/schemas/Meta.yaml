@@ -1,0 +1,53 @@
+Meta:
+  title: Meta
+  type: object
+  description: Мета информация
+  required:
+    - pagination
+  properties:
+    pagination:
+      $ref: '#/Pagination'
+
+Pagination:
+  title: MetaPagination
+  type: object
+  description: Пагинация
+  properties:
+    total:
+      type: integer
+      description: Общее количество всех элементов
+      minimum: 0
+      maximum: 2147483647
+      example: 100
+    count:
+      type: integer
+      description: Количество элементов на полученной странице
+      example: 15
+      minimum: 0
+      maximum: 2147483647
+    per_page:
+      type: integer
+      description: Количество элементов на страницу
+      default: 20
+      example: '20'
+      minimum: 1
+      maximum: 1000
+    current_page:
+      type: integer
+      description: Текущая страница
+      default: 1
+      example: 1
+      minimum: 1
+      maximum: 2147483647
+    total_pages:
+      type: integer
+      description: Всего страниц
+      example: 6
+      minimum: 1
+      maximum: 2147483647
+  required:
+    - total
+    - count
+    - per_page
+    - current_page
+    - total_pages

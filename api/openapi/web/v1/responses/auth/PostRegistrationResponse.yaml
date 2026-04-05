@@ -1,0 +1,6 @@
+PostRegistrationResponse:
+  description: OK
+  content:
+    application/json:
+      schema:
+        $ref: '../../components/schemas/auth/Login.yaml#/Login'

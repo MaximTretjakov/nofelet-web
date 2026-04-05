@@ -1,0 +1,12 @@
+SmsCode:
+  required: [error, leftSeconds]
+  properties:
+    code:
+      type: string
+    error:
+      type: string
+    leftSeconds:
+      type: integer
+    verificationToken:
+      type: string
+  type: object

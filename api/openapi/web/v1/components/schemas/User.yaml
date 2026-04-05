@@ -1,0 +1,14 @@
+UserCityId:
+  type: integer
+  description: ID города
+  example: 213
+  x-oapi-codegen-extra-tags:
+    binding: required
+
+UserType:
+  default: individual
+  type: string
+  example: individual
+  enum: [ legal-entity, individual ]
+  x-oapi-codegen-extra-tags:
+    binding: required,oneof=legal-entity individual

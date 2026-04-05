@@ -1,0 +1,21 @@
+SimpleErrorResponse:
+  description: Простая ошибка
+  content:
+    application/json:
+      schema:
+          allOf:
+            - $ref: '#/SimpleErrorBody'
+
+SimpleErrorBody:
+  description: Тело ошибки
+  required: [data]
+  properties:
+    data:
+      description: Описание ошибки
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: Текст ошибки
+          example: Текст ошибки от сервиса

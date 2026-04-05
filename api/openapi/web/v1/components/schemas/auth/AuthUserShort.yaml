@@ -1,0 +1,35 @@
+AuthUserShort:
+  required: [ group, name, isActiveBonusProfile ]
+  properties:
+    agreements:
+      items:
+        $ref: "../Agreement.yaml#/Agreement"
+      type: array
+    group:
+      description: Группа пользователя anonymous/authorized
+      type: string
+    name:
+      description: Имя пользователя - если пользователь не анонимный, если анонимный
+        пустая строка
+      type: string
+    isActiveBonusProfile:
+      example: true
+      type: boolean
+  type: object
+
+AuthAnonymousShort:
+  required: [ group, name, agreements ]
+  properties:
+    agreements:
+      items:
+        $ref: "../Agreement.yaml#/Agreement"
+      type: array
+      nullable: true
+    group:
+      description: Группа пользователя anonymous/authorized
+      type: string
+    name:
+      description: Имя пользователя - если пользователь не анонимный, если анонимный
+        пустая строка
+      type: string
+  type: object

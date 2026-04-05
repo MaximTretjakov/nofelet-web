@@ -1,0 +1,12 @@
+Agreement:
+  required: [type, confirmedAt]
+  properties:
+    type:
+      type: string
+      example: cookie
+      enum: [ cookie, personalData, subscription, termsOfUse, loyaltyProgram ]
+    confirmedAt:
+      type: string
+      format: date-time
+      example: "2022-12-01T00:00:00+03:00"
+  type: object
