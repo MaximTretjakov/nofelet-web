@@ -1,0 +1,54 @@
+Gift:
+  type: object
+  required: [ limit, list, stock, type ]
+  properties:
+    limit:
+      type: integer
+      description: Лимит на выбор подарков
+    list:
+      type: array
+      description: Массив товаров
+      items:
+        $ref: '#/GiftItem'
+    stock:
+      type: integer
+      description: ID акции
+    type:
+      description: Тип ограничения (cost || count)
+      type: string
+      enum:
+        - cost
+        - count
+      example: cost
+GiftItem:
+  type: object
+  required: [ author, coauthor, cost, id, oldCost, picture, selected, title ]
+  properties:
+    author:
+      type: array
+      description: Автор
+      items:
+        $ref: './products/ProductAuthor.yaml#/ProductAuthor'
+    coauthor:
+      type: array
+      description: Соавтор
+      items:
+        $ref: './products/ProductAuthor.yaml#/ProductAuthor'
+    cost:
+      type: integer
+      description: Цена
+    id:
+      type: integer
+      description: ID товара
+    oldCost:
+      type: integer
+      description: Старая цена
+    picture:
+      type: string
+      description: Обложка
+    selected:
+      type: boolean
+      description: Признак выбранности
+    title:
+      type: string
+      description: Заголовок

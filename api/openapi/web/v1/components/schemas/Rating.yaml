@@ -1,0 +1,20 @@
+Rating:
+  required: [count, votes, reviews]
+  properties:
+    count:
+      type: string
+      example: '0'
+      description: Оценка
+    votes:
+      type: integer
+      example: 10
+      description: Количество голосов
+    reviews:
+      type: integer
+      example: 10
+      description: Количество отзывов
+    customerProductAttractionRate:
+      type: integer
+      example: 1
+      description: Оценка товара текущим пользователем
+  type: object

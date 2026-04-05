@@ -1,0 +1,10 @@
+RegisterCountryShort:
+  required: [countryCode, id, title]
+  properties:
+    countryCode:
+      type: integer
+    id:
+      type: integer
+    title:
+      type: string
+  type: object

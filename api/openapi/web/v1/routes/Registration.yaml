@@ -1,0 +1,21 @@
+paths:
+  RegistrationRequestData:
+    post:
+      tags:
+        - Авторизация
+      security:
+        - BearerAuth: []
+      summary: Анонимная авторизация
+      description: Регистрация анонимного пользователя
+      operationId: RegistrationRequestData
+      responses:
+        "201":
+          $ref: "../responses/auth/PostRegistrationResponse.yaml#/PostRegistrationResponse"
+
+parameters:
+  RefreshToken:
+    name: refreshToken
+    in: query
+    required: true
+    schema:
+      type: string

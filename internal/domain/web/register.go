@@ -11,5 +11,5 @@ func Register(deps *dependency.Container) {
 	r := deps.Web.Routes
 	r.GET("api/v1/registration", c.PostRegister)
 	r.GET("api/v1/auth", c.PostAuth)
-	r.GET("api/v1/deauth", c.PostDeauth)
+	r.GET("api/v1/logout", c.PostLogout)
 }

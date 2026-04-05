@@ -1,0 +1,8 @@
+AuthCity:
+  required: [id, title]
+  properties:
+    id:
+      type: integer
+    title:
+      type: string
+  type: object

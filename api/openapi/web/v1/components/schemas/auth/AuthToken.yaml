@@ -1,0 +1,12 @@
+AuthToken:
+  required: [accessToken, expAccessToken, expRefreshToken, refreshToken]
+  properties:
+    accessToken:
+      type: string
+    expAccessToken:
+      type: number
+    expRefreshToken:
+      type: number
+    refreshToken:
+      type: string
+  type: object

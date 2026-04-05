@@ -1,0 +1,3706 @@
+ProjectId:
+  type: string
+  description: Идентификатор проекта
+  example: '1'
+  pattern: '^\d{1,19}$'
+  minLength: 1
+  maxLength: 19
+
+Project:
+  title: Project
+  type: object
+  description: Проект
+  properties:
+    id:
+      $ref: '#/ProjectId'
+    type:
+      type: string
+      enum:
+        - project
+      default: project
+    attributes:
+      type: object
+      required:
+        - name
+        - pageType
+        - uri
+      properties:
+        name:
+          type: string
+          example: Читай-город
+          minLength: 2
+          maxLength: 128
+          description: Название
+        pageType:
+          type: string
+          description: Тип страниц проекта
+          example: |-
+            Типы проекта
+            - promotion - акции
+            - content - контентные страницы
+        uri:
+          type: string
+          example: 'https://www.chitai-gorod.ru'
+          format: uri
+          description: |-
+            Uri проекта
+            
+            Примеры:
+            
+            - https://www.chitai-gorod.ru
+            - https://www.chitai-gorod.ru/school
+  required:
+    - id
+    - type
+    - attributes
+
+ProjectRelationEntity:
+  type: object
+  required:
+    - type
+    - id
+  properties:
+    type:
+      type: string
+      enum:
+        - project
+    id:
+      $ref: '#/PromotionId'
+
+PromotionId:
+  type: string
+  minLength: 36
+  maxLength: 36
+  format: uuid
+  description: Идентификатор акции
+
+Promotion:
+  title: Promotion
+  type: object
+  description: Акция
+  properties:
+    id:
+      $ref: '#/PromotionId'
+    type:
+      type: string
+      enum:
+        - promotion
+      default: promotion
+    attributes:
+      type: object
+      required:
+        - title
+        - description
+        - direction
+        - foreignId
+        - activeFrom
+        - activeTo
+        - priority
+        - createdAt
+        - updatedAt
+        - createdBy
+        - updatedBy
+      properties:
+        title:
+          type: string
+          example: Ночь музеев
+          minLength: 2
+          maxLength: 128
+          description: Заголовок акции
+        description:
+          type: string
+          example: Скидки до 30% на подборку сувениров и книг по искусству. Для авторизованных пользователей
+          minLength: 1
+          maxLength: 512
+          description: Анонс - описание акции
+          nullable: true
+        direction:
+          type: array
+          description: Список, где действует акция
+          items:
+            $ref: '#/PromotionDirection'
+        foreignId:
+          type: string
+          description: Внутренний единый номер акции - берется из ВС при регистрации акции там
+          minLength: 1
+          maxLength: 10
+          pattern: '\d+'
+        activeFrom:
+          type: string
+          example: '2016-04-21T00:01:00+03:00'
+          format: date-time
+          description: Акция действует от даты
+          nullable: true
+        activeTo:
+          type: string
+          example: '2016-04-22T00:01:00+03:00'
+          format: date-time
+          description: Акция действует до даты
+          nullable: true
+        priority:
+          type: integer
+          example: 500
+          default: 500
+          minimum: 1
+          maximum: 2147483647
+          description: Приоритет вывода
+    relationships:
+      type: object
+      properties:
+        mainImageDesktop:
+          type: object
+          properties:
+            data:
+              $ref: '#/FileRelationEntity'
+          required:
+            - data
+        mainImageAdaptive:
+          type: object
+          properties:
+            data:
+              $ref: '#/FileRelationEntity'
+          required:
+            - data
+        page:
+          type: object
+          description: Страница
+          properties:
+            data:
+              $ref: '#/PageRelationEntity'
+          required:
+            - data
+        project:
+          type: object
+          description: Проект
+          properties:
+            data:
+              $ref: '#/ProjectRelationEntity'
+          required:
+            - data
+
+PromotionIncluded:
+  title: PromotionIncluded
+  type: array
+  description: «Включения» акции
+  items:
+    oneOf:
+      - $ref: '#/ConstructorPage'
+      - $ref: '#/Project'
+      - $ref: '#/File'
+
+ExternalPromotion:
+  title: ExternalPromotion
+  type: object
+  description: Акция - для внешнего апи
+  properties:
+    id:
+      $ref: '#/PromotionId'
+    type:
+      type: string
+      enum:
+        - promotion
+      default: promotion
+    attributes:
+      type: object
+      required:
+        - title
+        - description
+        - direction
+        - foreignId
+        - activeFrom
+        - activeTo
+        - priority
+        - advertisementMarker
+        - targetAuditory
+      properties:
+        title:
+          type: string
+          example: Ночь музеев
+          minLength: 1
+          maxLength: 128
+          description: Заголовок акции
+        description:
+          type: string
+          example: Скидки до 30% на подборку сувениров и книг по искусству. Для авторизованных пользователей
+          minLength: 1
+          maxLength: 512
+          description: Анонс - описание акции
+          nullable: true
+        direction:
+          type: array
+          description: Список, где действует акция
+          items:
+            $ref: '#/PromotionDirection'
+        foreignId:
+          type: string
+          description: Внутренний единый номер акции - берется из ВС при регистрации акции там
+          minLength: 1
+          maxLength: 10
+          pattern: '\d+'
+        activeFrom:
+          type: string
+          example: '2016-04-21T00:01:00+03:00'
+          format: date-time
+          description: Акция действует от даты
+          nullable: true
+        activeTo:
+          type: string
+          example: '2016-04-22T00:01:00+03:00'
+          format: date-time
+          description: Акция действует до даты
+          nullable: true
+        priority:
+          type: integer
+          example: 500
+          default: 500
+          minimum: 1
+          maximum: 2147483647
+          description: Приоритет вывода
+        advertisementMarker:
+          oneOf:
+            - $ref: '#/PromotionAdvertisementMarker'
+            - $ref: '#/NullType'
+        targetAuditory:
+          $ref: '#/PromotionTargetAuditory'
+    relationships:
+      type: object
+      properties:
+        mainImageDesktop:
+          type: object
+          properties:
+            data:
+              $ref: '#/FileRelationEntity'
+          required:
+            - data
+        mainImageAdaptive:
+          type: object
+          properties:
+            data:
+              $ref: '#/FileRelationEntity'
+          required:
+            - data
+        bannerImageMobile:
+          type: object
+          properties:
+            data:
+              $ref: '#/FileRelationEntity'
+          required:
+            - data
+        page:
+          type: object
+          description: Страница
+          properties:
+            data:
+              $ref: '#/PageRelationEntity'
+          required:
+            - data
+        project:
+          type: object
+          description: Проект
+          properties:
+            data:
+              $ref: '#/ProjectRelationEntity'
+          required:
+            - data
+
+ExternalPromotionIncluded:
+  title: ExternalPromotionIncluded
+  type: array
+  description: «Включения» акции для внешнего апи
+  items:
+    oneOf:
+      - $ref: '#/ConstructorPage'
+      - $ref: '#/Project'
+      - $ref: '#/File'
+
+PromotionDirection:
+  type: string
+  enum:
+    - online
+    - retail
+  description: |-
+    Где действует акция
+    
+    - online — Интернет-магазин
+    - retail — Розничная сеть
+
+PromotionRelationEntity:
+  type: object
+  required:
+    - type
+    - id
+  properties:
+    type:
+      type: string
+      enum:
+        - promotion
+    id:
+      $ref: '#/PromotionId'
+
+ProductSetRelationEntity:
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - productSet
+    id:
+      type: string
+      format: uuid
+  required:
+    - type
+    - id
+
+PageId:
+  type: string
+  minLength: 36
+  maxLength: 36
+  format: uuid
+  description: Идентификатор страницы
+
+ConstructorPage:
+  title: Page
+  type: object
+  description: Страница
+  properties:
+    id:
+      $ref: '#/PageId'
+    type:
+      type: string
+      enum:
+        - page
+      example: page
+      default: page
+    attributes:
+      type: object
+      required:
+        - title
+        - path
+        - status
+        - publishedFrom
+        - publishedTo
+        - availableOnlyByLink
+        - createdAt
+        - updatedAt
+        - createdBy
+        - updatedBy
+      properties:
+        title:
+          type: string
+          example: Читай-школа
+          minLength: 2
+          maxLength: 128
+          description: Заголовок
+        path:
+          type: string
+          example: /chitai-schkola
+          minLength: 2
+          maxLength: 128
+          pattern: '^[a-z0-9\-\/]+$'
+          description: Адрес страницы (относительный url)
+        status:
+          $ref: '#/PageStatus'
+        publishedFrom:
+          type: string
+          format: date-time
+          example: '2016-04-22T00:01:00+03:00'
+          description: Опубликована от даты
+          nullable: true
+        publishedTo:
+          type: string
+          example: '2016-04-22T00:02:00+03:00'
+          description: Опубликована до даты
+          format: date-time
+          nullable: true
+        availableOnlyByLink:
+          type: boolean
+          description: Страница доступна только по прямой ссылке
+        createdAt:
+          type: string
+          example: '2016-04-22T00:00:00+03:00'
+          format: date-time
+          description: Дата создания
+        updatedAt:
+          type: string
+          example: '2016-04-22T00:00:00+03:00'
+          format: date-time
+          description: Дата последнего обновления
+        createdBy:
+          type: string
+          example: admin@chitai-gorod.ru
+          description: |-
+            Пользователь, создавший страницу
+            Предопределенные имена пользователей:
+             - undefined - не определен, такое имя будет для тех страниц, которые созданы до внедрения данного функционала
+        updatedBy:
+          type: string
+          example: admin@chitai-gorod.ru
+          description: |-
+            Пользователь, изменивший страницу
+            Предопределенные имена пользователей:
+             - undefined - не определен, такое имя будет для тех страниц, которые созданы до внедрения данного функционала
+             - auto - для модификаций через скрипты, например деактивация страницы по истечению срока активности
+    relationships:
+      type: object
+      properties:
+        blocks:
+          $ref: '#/PageBlockRelationEntity'
+        project:
+          type: object
+          description: Проект
+          properties:
+            data:
+              $ref: '#/ProjectRelationEntity'
+          required:
+            - data
+        seo:
+          $ref: '#/PageSeoRelationEntity'
+        files:
+          $ref: '#/PageFilesRelationEntity'
+        parents:
+          type: object
+          description: Полная цепочка родительских страниц (начиная от корня)
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/PageRelationEntity'
+          required:
+            - data
+        children:
+          type: object
+          description: Дочерние страницы
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/PageRelationEntity'
+          required:
+            - data
+        productSets:
+          type: object
+          description: Наборы товаров страницы
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/ProductSetRelationEntity'
+          required:
+            - data
+        promotion:
+          type: object
+          description: Акция
+          properties:
+            data:
+              $ref: '#/PromotionRelationEntity'
+          required:
+            - data
+  required:
+    - id
+    - type
+    - attributes
+
+PageBlockRelationEntity:
+  type: object
+  description: Блоки страницы
+  properties:
+    data:
+      type: array
+      items:
+        oneOf:
+          -   description: Блок страницы «Подложка»
+              properties:
+                type:
+                  type: string
+                  example: pageBlockBackground
+                  enum:
+                    - pageBlockBackground
+                id:
+                  type: string
+                  format: uuid
+                  example: 018829cf-642f-7bf7-acf8-b279026a310f
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Хлебные крошки»
+              properties:
+                type:
+                  type: string
+                  example: pageBlockBreadcrumbs
+                  enum:
+                    - pageBlockBreadcrumbs
+                  default: pageBlockBreadcrumbs
+                id:
+                  type: string
+                  format: uuid
+                  example: 01876f45-d2da-7636-aca0-28827c4c9c44
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Параграф»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockParagraph
+                  default: pageBlockParagraph
+                  example: pageBlockParagraph
+                id:
+                  type: string
+                  format: uuid
+                  example: 018842f3-10e2-731e-8883-842853894df2
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Заголовок»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockHeader
+                id:
+                  type: string
+                  format: uuid
+                  example: 01886dc0-2f0b-7018-af86-04edafe28a26
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Список»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockList
+                id:
+                  type: string
+                  format: uuid
+                  example: 01886dc0-2f0b-7018-af86-04edafe28a26
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Изображения в ряд»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockImageRow
+                  default: pageBlockImageRow
+                  example: pageBlockImageRow
+                id:
+                  type: string
+                  format: uuid
+                  example: 01884323-2ae4-75f2-b572-056903b264fc
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Товарная полка из списка идентификаторов товаров»
+              properties:
+                type:
+                  type: string
+                  default: pageBlockShelfOfProductId
+                  example: pageBlockShelfOfProductId
+                  enum:
+                    - pageBlockShelfOfProductId
+                id:
+                  type: string
+                  format: uuid
+                  example: 0188437c-bc9a-7296-8f13-e452254d3997
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Каталожная выдача с помощью динамической фильтрации»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockShowcaseFromFilter
+                  default: pageBlockShowcaseFromFilter
+                  example: pageBlockShowcaseFromFilter
+                id:
+                  type: string
+                  format: uuid
+                  example: 01884482-775c-7b79-88f9-1d00ab3d20dc
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Каталожная выдача из списка идентификаторов товаров»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockShowcaseFromProductId
+                  default: pageBlockShowcaseFromProductId
+                  example: pageBlockShowcaseFromProductId
+                id:
+                  type: string
+                  format: uuid
+                  example: 01884d46-6ce1-73e9-b4a3-226f62f370a9
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Слайдер с изображениями»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockSliderImage
+                id:
+                  type: string
+                  format: uuid
+                  example: 01892551-b7f4-7f66-9e2d-d1f4ab510b0a
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Баннерная карусель»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockBannerCarousel
+                id:
+                  type: string
+                  format: uuid
+                  example: 01892551-b7f4-7f66-9e2d-d1f4ab510b0a
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Правила акции»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockPromotionRules
+                id:
+                  type: string
+                  format: uuid
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Видео»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockVideo
+                id:
+                  type: string
+                  format: uuid
+                  example: 018bcd8f-3e1a-7a9a-8f96-c04cdac9ddce
+              required:
+                - type
+                - id
+          -   description: Блок страницы «Товар»
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageBlockProduct
+                id:
+                  type: string
+                  format: uuid
+                  example: 018bcd8f-3e1a-7a9a-8f96-c04cdac9ddce
+              required:
+                - type
+                - id
+          -   description: SEO страницы
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageSeo
+                  default: pageSeo
+                  example: pageSeo
+                id:
+                  type: string
+                  format: uuid
+                  example: 01876f45-d2da-7636-aca0-28827c4c9c44
+              required:
+                - type
+                - id
+          -   description: Файл страницы
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - pageFile
+                  default: pageFile
+                  example: pageFile
+                id:
+                  type: string
+                  format: uuid
+                  example: 01884222-f517-7965-a7ae-36a065d05493
+              required:
+                - type
+                - id
+          -   description: Проект
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - project
+                  default: project
+                  example: project
+                id:
+                  type: string
+                  example: '1'
+                  pattern: '^\d{1,19}$'
+                  minLength: 1
+                  maxLength: 19
+              required:
+                - type
+                - id
+        type: object
+  required:
+    - data
+
+PageSeoRelationEntity:
+  type: object
+  description: SEO страницы
+  properties:
+    data:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          enum:
+            - pageSeo
+        id:
+          type: string
+          format: uuid
+  required:
+    - data
+
+PageFilesRelationEntity:
+  type: object
+  description: Файлы страницы
+  properties:
+    data:
+      type: array
+      items:
+        type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - pageFile
+          id:
+            type: string
+            format: uuid
+        required:
+          - type
+          - id
+  required:
+    - data
+
+PageStatus:
+  title: PageStatus
+  x-stoplight:
+    id: oeg771hilcphi
+  type: string
+  description: |-
+    Статус страницы
+    
+    - draft — Черновик
+    - published — Опубликована
+    - deactivated — Деактивирована
+  enum:
+    - draft
+    - published
+    - deactivated
+  example: draft
+PageSeo:
+  title: PageSeo
+  x-stoplight:
+    id: abyyiawjzlje1
+  type: object
+  description: SEO страницы
+  properties:
+    id:
+      type: string
+      example: 01876f45-d2da-7636-aca0-28827c4c9c44
+      format: uuid
+    type:
+      type: string
+      enum:
+        - pageSeo
+      default: pageSeo
+      example: pageSeo
+    attributes:
+      $ref: '#/Seo'
+  required:
+    - id
+    - type
+    - attributes
+
+ExternalPage:
+  title: ExternalPage
+  type: object
+  description: Страница для внешнего апи
+  properties:
+    id:
+      $ref: '#/PageId'
+    type:
+      type: string
+      enum:
+        - page
+    attributes:
+      type: object
+      required:
+        - title
+        - path
+        - status
+        - publishedFrom
+        - publishedTo
+        - createdAt
+        - updatedAt
+      properties:
+        title:
+          type: string
+          example: Читай-школа
+          minLength: 2
+          maxLength: 128
+          description: Заголовок
+        path:
+          type: string
+          example: /chitai-schkola
+          minLength: 2
+          maxLength: 128
+          pattern: '^[a-z0-9\-\/]+$'
+          description: Адрес страницы (относительный url)
+        status:
+          $ref: '#/PageStatus'
+        publishedFrom:
+          type: string
+          format: date-time
+          example: '2016-04-22T00:01:00+03:00'
+          description: Опубликована от даты
+          nullable: true
+        publishedTo:
+          type: string
+          example: '2016-04-22T00:02:00+03:00'
+          description: Опубликована до даты
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          example: '2016-04-22T00:00:00+03:00'
+          format: date-time
+          description: Дата создания
+        updatedAt:
+          type: string
+          example: '2016-04-22T00:00:00+03:00'
+          format: date-time
+          description: Дата последнего обновления
+    relationships:
+      type: object
+      properties:
+        blocks:
+          $ref: '#/PageBlockRelationEntity'
+        seo:
+          $ref: '#/PageSeoRelationEntity'
+        files:
+          $ref: '#/PageFilesRelationEntity'
+        productSets:
+          type: object
+          description: Наборы товаров страницы
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/ProductSetRelationEntity'
+          required:
+            - data
+        promotion:
+          type: object
+          description: Акция
+          properties:
+            data:
+              $ref: '#/PromotionRelationEntity'
+          required:
+            - data
+  required:
+    - id
+    - type
+    - attributes
+
+ExternalPageIncluded:
+  title: ExternalPageIncluded
+  type: array
+  description: «Включения» страницы для внешнего апи
+  items:
+    oneOf:
+      - $ref: '#/PageSeo'
+      - $ref: '#/PageFile'
+      - $ref: '#/PageBlockBackground'
+      - $ref: '#/PageBlockBreadcrumbs'
+      - $ref: '#/PageBlockParagraph'
+      - $ref: '#/PageBlockHeader'
+      - $ref: '#/PageBlockList'
+      - $ref: '#/PageBlockImageRow'
+      - $ref: '#/PageBlockShelfOfProductId'
+      - $ref: '#/PageBlockShowcaseFromFilter'
+      - $ref: '#/PageBlockShowcaseOfProductId'
+      - $ref: '#/PageBlockShowcaseOfProductSet'
+      - $ref: '#/PageBlockSliderImage'
+      - $ref: '#/PageBlockBannerCarousel'
+      - $ref: '#/PageBlockPromotionRules'
+      - $ref: '#/ProductSet'
+      - $ref: '#/PageBlockHighlightLinks'
+      - $ref: '#/PageBlockVideo'
+      - $ref: '#/PageBlockProduct'
+      - $ref: '#/ExternalPromotion'
+      - $ref: '#/File'
+
+PageIncluded:
+  title: PageIncluded
+  x-stoplight:
+    id: icqkjf1hv6nxf
+  type: array
+  x-internal: true
+  description: «Включения» страницы
+  items:
+    oneOf:
+      - $ref: '#/PageSeo'
+      - $ref: '#/PageFile'
+      - $ref: '#/Project'
+      - $ref: '#/PageBlockBackground'
+      - $ref: '#/PageBlockBreadcrumbs'
+      - $ref: '#/PageBlockParagraph'
+      - $ref: '#/PageBlockHeader'
+      - $ref: '#/PageBlockList'
+      - $ref: '#/PageBlockImageRow'
+      - $ref: '#/PageBlockShelfOfProductId'
+      - $ref: '#/PageBlockShowcaseFromFilter'
+      - $ref: '#/PageBlockShowcaseOfProductId'
+      - $ref: '#/PageBlockShowcaseOfProductSet'
+      - $ref: '#/PageBlockSliderImage'
+      - $ref: '#/PageBlockBannerCarousel'
+      - $ref: '#/PageBlockPromotionRules'
+      - $ref: '#/ProductSet'
+      - $ref: '#/PageBlockHighlightLinks'
+      - $ref: '#/PageBlockVideo'
+      - $ref: '#/PageBlockProduct'
+PageFile:
+  title: PageFile
+  x-stoplight:
+    id: de8e2e3dcf7a3
+  type: object
+  description: Файл страницы
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: 01884222-f517-7965-a7ae-36a065d05493
+      description: Идентификатор
+    type:
+      type: string
+      enum:
+        - pageFile
+      default: pageFile
+      example: pageFile
+    attributes:
+      type: object
+      required:
+        - path
+        - createdAt
+      properties:
+        path:
+          type: string
+          example: /path/to/image.jpg
+          description: Путь до файла
+        createdAt:
+          type: string
+          example: '2016-04-22T00:00:00+03:00'
+          format: date-time
+          description: Дата создания
+  required:
+    - id
+    - type
+    - attributes
+
+PageRelationEntity:
+  type: object
+  required:
+    - type
+    - id
+  properties:
+    type:
+      type: string
+      enum:
+        - page
+    id:
+      $ref: '#/PageId'
+
+FileId:
+  type: string
+  format: uuid
+  description: Идентификатор файла
+
+FileRelationEntity:
+  type: object
+  properties:
+    id:
+      $ref: '#/FileId'
+    type:
+      type: string
+      enum: [ 'file' ]
+  required:
+    - id
+    - type
+
+File:
+  type: object
+  description: Файл
+  properties:
+    id:
+      $ref: '#/FileId'
+    type:
+      type: string
+      enum: [ 'file' ]
+    attributes:
+      type: object
+      properties:
+        path:
+          type: string
+          description: Путь к файлу
+          pattern: (?:[a-z0-9-_]+\/)*[a-z0-9-_]+\.[a-z0-9]+
+        createdAt:
+          type: string
+          description: Дата создания
+          format: date-time
+      required:
+        - path
+        - createdAt
+  required:
+    - id
+    - type
+    - attributes
+
+Color:
+  title: Color
+  x-stoplight:
+    id: uglwb3ixu5t0h
+  type: string
+  description: Цвет
+  enum:
+    - Base/1000
+    - Base/900
+    - Base/800
+    - Base/700
+    - Base/600
+    - Base/500
+    - Base/400
+    - Base/300
+    - Base/200
+    - Base/100
+    - Base/0
+    - Bg/Flat/Base
+    - Bg/Flat/Accent
+    - Bg/Flat/BrandBlue
+    - Bg/Elevated/Base
+    - Bg/Elevated/Accent
+    - Bg/Overlay
+    - Red/800
+    - Red/600
+    - Red/500
+    - Red/200
+    - Red/100
+    - Orange/800
+    - Orange/600
+    - Orange/500
+    - Orange/200
+    - Orange/100
+    - Yellow/800
+    - Yellow/600
+    - Yellow/500
+    - Yellow/200
+    - Yellow/100
+    - Green/800
+    - Green/600
+    - Green/500
+    - Green/200
+    - Green/100
+    - Eucalyptus/800
+    - Eucalyptus/600
+    - Eucalyptus/500
+    - Eucalyptus/200
+    - Eucalyptus/100
+    - BrandBlue/800
+    - BrandBlue/600
+    - BrandBlue/500
+    - BrandBlue/200
+    - BrandBlue/100
+    - Ultramarine/800
+    - Ultramarine/600
+    - Ultramarine/500
+    - Ultramarine/200
+    - Ultramarine/100
+    - Purple/800
+    - Purple/600
+    - Purple/500
+    - Purple/200
+    - Purple/100
+BackgroundColor:
+  title: BackgroundColor
+  x-stoplight:
+    id: uglwb3ixu5t0h
+  type: object
+  description: Заливка фона
+  properties:
+    tone:
+      $ref: '#/Color'
+    opacity:
+      $ref: '#/Opacity'
+  required:
+    - tone
+    - opacity
+Size:
+  title: Size
+  x-stoplight:
+    id: k67u5nbmos3cj
+  type: string
+  description: Размер шрифта
+  enum:
+    - h0
+    - h1
+    - h2
+    - h3
+    - h4
+    - h5
+Opacity:
+  title: Opacity
+  type: integer
+  description: Непрозрачность
+  enum:
+    - 10
+    - 20
+    - 30
+    - 40
+    - 50
+    - 60
+    - 70
+    - 80
+    - 90
+    - 100
+OpaqueColor:
+  title: OpaqueColor
+  type: object
+  description: Непрозрачный цвет
+  properties:
+    tone:
+      $ref: '#/Color'
+    opacity:
+      $ref: '#/Opacity'
+  required:
+    - tone
+    - opacity
+Font:
+  title: Font
+  type: object
+  description: Font
+  properties:
+    color:
+      $ref: '#/OpaqueColor'
+    size:
+      $ref: '#/Size'
+  required:
+    - color
+    - size
+ColorableHeader:
+  title: ColorableHeader
+  x-stoplight:
+    id: rkfo0nduacn7p
+  type: object
+  description: Заголовок
+  properties:
+    text:
+      type: string
+      example: Читай-школа
+      minLength: 3
+      maxLength: 256
+    font:
+      $ref: '#/Font'
+  required:
+    - text
+    - font
+ColorableSubHeader:
+  title: ColorableSubHeader
+  x-stoplight:
+    id: wzlg9z8nqsfo6
+  type: object
+  description: Подзаголовок
+  properties:
+    text:
+      type: string
+      minLength: 3
+      maxLength: 256
+      example: 'Всё для учёбы: скидки до 30% и полезные подборки'
+    font:
+      $ref: '#/Size'
+    color:
+      $ref: '#/Font'
+  required:
+    - text
+    - font
+LinkableHeader:
+  type: object
+  properties:
+    text:
+      type: string
+      example: 'Тетради, ручки и не только'
+      minLength: 3
+      maxLength: 256
+    link:
+      oneOf:
+        - $ref: '#/PageBlockLink'
+        - $ref: '#/NullType'
+    htmlTag:
+      $ref: '#/LinkableHeaderHtmlTag'
+  required:
+    - text
+    - link
+    - htmlTag
+  title: LinkableHeader
+LinkableHeaderHtmlTag:
+  type: string
+  enum:
+    - div
+    - h1
+    - h2
+    - h3
+  description: HTML-тег заголовка (свойство только для SEO сайта)
+TextAlign:
+  title: TextAlign
+  x-stoplight:
+    id: 1te50ex404awu
+  type: string
+  enum:
+    - left
+    - center
+    - right
+  example: left
+  description: Выравнивание текста
+BlockAlign:
+  title: BlockAlign
+  type: string
+  enum:
+    - left
+    - center
+    - right
+  example: left
+  description: Выравнивание блоков
+HighlightLink:
+  title: HighlightLink
+  type: object
+  description: Хайлайт ссылка
+  properties:
+    text:
+      type: string
+      example: 'Западные комиксы'
+      minLength: 1
+      maxLength: 50
+    link:
+      $ref: '#/PageBlockLink'
+  required:
+    - text
+    - link
+BlockBackgroundSize:
+  title: BlockBackgroundSize
+  type: string
+  description: |-
+    Размер блока c подложкой
+    
+    - byPage — На всю ширину страницы
+    - byContainer — По ширине контейнера
+  default: byPage
+  enum:
+    - byPage
+    - byContainer
+PageBlockProductItem:
+  title: PageBlockProductItem
+  type: object
+  description: Товар для блока «Товар»
+  properties:
+    productId:
+      $ref: '#/ProductId'
+    overriddenProperties:
+      $ref: '#/PageBlockProductItemOverriddenProperties'
+    quote:
+      type: string
+      minLength: 1
+      maxLength: 8192
+      description: Цитата
+      example: Что толку в сохранении самооценки, если она столь хрупка, что не в состоянии пережить неудачу?
+      nullable: true
+  required:
+    - productId
+    - overriddenProperties
+    - quote
+PageBlockProductItemOverriddenProperties:
+  title: PageBlockProductItemOverriddenProperties
+  type: object
+  description: Значение свойств товара для переопределения при выводе
+  properties:
+    name:
+      type: string
+      minLength: 1
+      maxLength: 512
+      description: Название товара
+      example: Принцип «черного ящика»
+      nullable: true
+    authors:
+      type: string
+      minLength: 1
+      maxLength: 512
+      description: Автор товара, если несколько, то через запятую
+      example: Мэтью Сайед
+      nullable: true
+    description:
+      type: string
+      minLength: 1
+      maxLength: 8192
+      description: Описание товара
+      example: В современной культуре принято праздновать достижения и игнорировать подвалы.
+      nullable: true
+    image:
+      type: string
+      description: Обложка - основное изображение товара
+      format: uuid
+      example: 0188f3cf-1e67-78ba-b754-e7f13bd1dc9f
+      nullable: true
+  required:
+    - name
+    - authors
+    - description
+    - image
+NullType:
+  title: OpenAPI 3.0 null-type ref
+  description: for adding nullability to a ref
+  example: null
+  default: null
+  enum:
+    - null
+OrderedProductId:
+  type: array
+  minItems: 0
+  maxItems: 100
+  uniqueItems: true
+  description: 'Список идентификаторов товаров, которые должны быть первыми'
+  items:
+    type: integer
+    minimum: 1
+    maximum: 2147483647
+    example: 2972203
+Seo:
+  title: Seo
+  x-stoplight:
+    id: im4ov5ohwywae
+  type: object
+  description: Seo
+  properties:
+    title:
+      type: string
+      example: 'Читай-школа: учебники, пособия для экзаменов и другие полезные товары'
+      minLength: 2
+      maxLength: 255
+      nullable: true
+    description:
+      type: string
+      minLength: 2
+      maxLength: 255
+      example: 'Готовьтесь к школе вместе с «Читай-городом»! На одной странице собраны учебники по классам, пособия для ЕГЭ, ОГЭ и ВПР, канцтовары, скидки и полезные статьи. Бесплатная доставка курьером от 2000 рублей, самовывоз из магазинов и пунктов выдачи'
+      nullable: true
+    text:
+      type: string
+      minLength: 2
+      maxLength: 8192
+      example: 'Учебная литература – категория печатных изданий, содержащих информацию из разных областей знаний. Предназначена она для тех, кто стремится освоить предметы школьной программы, кто только начинает познавать мир, а также родителям, учителям, наставникам. Самый богатый выбор обучающей литературы различных жанров представлен в book24.ru. Оформить заказ можно с любого уголка России.'
+      nullable: true
+    openGraphImage:
+      type: string
+      description: 'og:image (идентификатор файла)'
+      format: uuid
+      example: 01884222-f517-7965-a7ae-36a065d05493
+      nullable: true
+    robots:
+      type: array
+      description: 'Список meta-тэгов robots'
+      items:
+        type: string
+        enum:
+          - noindex
+          - nofollow
+        description: |-
+          Значение meta-тэга robots
+          
+          - noindex — Запрет индексации страницы
+          - nofollow — Запрет на хождение по ссылкам страницы
+  required:
+    - title
+    - description
+    - text
+    - openGraphImage
+    - robots
+PageBlockLink:
+  oneOf:
+    - $ref: '#/PageBlockLinkInternal'
+    - $ref: '#/PageBlockLinkExternal'
+  description: Ссылка блока страницы
+  title: PageBlockLink
+PageBlockLinkInternal:
+  title: PageBlockLinkInternal
+  x-stoplight:
+    id: fzftlsurz8ax6
+  type: object
+  description: Внутренняя ссылка
+  properties:
+    linkType:
+      type: string
+      enum:
+        - internal
+      description: Тип ссылки
+    page:
+      type: string
+      example: 01876f45-d2da-7636-aca0-28827c4c9c44
+      description: Идентификатор страницы
+      format: uuid
+    target:
+      $ref: '#/PageBlockLinkTarget'
+  required:
+    - linkType
+    - page
+    - target
+PageBlockLinkExternal:
+  title: PageBlockLinkExternal
+  x-stoplight:
+    id: 8n4oc7tzmism4
+  type: object
+  description: Внешняя ссылка
+  properties:
+    linkType:
+      type: string
+      enum:
+        - external
+      description: Тип
+    link:
+      type: string
+      description: Ссылка
+      format: uri
+      example: 'https://old.chitai-gorod.ru/school/1'
+    target:
+      $ref: '#/PageBlockLinkTarget'
+  required:
+    - linkType
+    - link
+    - target
+PageBlockLinkTarget:
+  title: PageBlockLinkTarget
+  type: string
+  default: self
+  enum:
+    - self
+    - blank
+  description: |-
+    Указывает, где будет открываться ссылка
+    
+    - self — На текущей вкладке
+    - blank — В новой вкладке
+PageBlockBackground:
+  title: PageBlockBackground
+  type: object
+  description: Блок страницы «Подложка»
+  x-stoplight:
+    id: 2832e1afce7f5
+  x-internal: false
+  properties:
+    id:
+      type: string
+      minLength: 36
+      maxLength: 36
+      example: 018829cf-642f-7bf7-acf8-b279026a310f
+      format: uuid
+      description: Идентификатор
+    type:
+      type: string
+      example: pageBlockBackground
+      default: pageBlockBackground
+      enum:
+        - pageBlockBackground
+    attributes:
+      type: object
+      required:
+        - header
+        - subheader
+        - link
+        - size
+        - textAlign
+        - backgroundColor
+        - imageDesktop
+        - imageAdaptive
+        - showShareLink
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/ColorableHeader'
+            - $ref: '#/NullType'
+        subheader:
+          oneOf:
+            - $ref: '#/ColorableSubHeader'
+            - $ref: '#/NullType'
+        link:
+          oneOf:
+            - $ref: '#/PageBlockLink'
+            - $ref: '#/NullType'
+        size:
+          $ref: '#/BlockBackgroundSize'
+        textAlign:
+          $ref: '#/TextAlign'
+        backgroundColor:
+          $ref: '#/BackgroundColor'
+        imageDesktop:
+          type: string
+          description: Изображение на ПК
+          format: uuid
+          example: 0188f3cf-1e67-78ba-b754-e7f13bd1dc9f
+          nullable: true
+        imageAdaptive:
+          type: string
+          description: Изображение на адаптиве
+          example: 0188f3c7-e33d-7fd3-ac02-18b895ab9fc2
+          format: uuid
+          nullable: true
+        showShareLink:
+          type: boolean
+          description: Отображать ссылку «Поделиться с друзьями»
+  required:
+    - id
+    - type
+    - attributes
+PageBlockBreadcrumbs:
+  title: PageBlockBreadcrumbs
+  x-stoplight:
+    id: hetucvqie7xor
+  type: object
+  description: Блок страницы «Хлебные крошки»
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: 01876f45-d2da-7636-aca0-28827c4c9c44
+    type:
+      type: string
+      enum:
+        - pageBlockBreadcrumbs
+      default: pageBlockBreadcrumbs
+      example: pageBlockBreadcrumbs
+    attributes:
+      type: object
+      required:
+        - path
+      properties:
+        path:
+          type: array
+          minItems: 1
+          maxItems: 10
+          description: Путь от корня
+          items:
+            type: string
+            example: 018997c1-c442-78fe-9622-d8878085b9c5
+            format: uuid
+  required:
+    - id
+    - type
+    - attributes
+PageBlockParagraph:
+  title: PageBlockParagraph
+  x-stoplight:
+    id: tviscf0zca2pl
+  type: object
+  description: Блок страницы «Параграф»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 018842f3-10e2-731e-8883-842853894df2
+    type:
+      type: string
+      default: pageBlockParagraph
+      example: pageBlockParagraph
+      enum:
+        - pageBlockParagraph
+    attributes:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          description: Текст
+          example: <b>4. Сатира или нечто большее</b>
+          minLength: 2
+          maxLength: 16384
+  required:
+    - id
+    - type
+    - attributes
+PageBlockHeader:
+  title: PageBlockHeader
+  type: object
+  description: Блок страницы «Заголовок»
+  x-stoplight:
+    id: 93dbde9630ae7
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 01886dc0-2f0b-7018-af86-04edafe28a26
+    type:
+      type: string
+      enum:
+        - pageBlockHeader
+    attributes:
+      type: object
+      required:
+        - text
+        - level
+      properties:
+        text:
+          type: string
+          description: Текст
+          example: Шаг 4. Знакомимся с анатомией заблуждений
+          minLength: 2
+          maxLength: 256
+        level:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+  required:
+    - id
+    - type
+    - attributes
+PageBlockList:
+  title: PageBlockList
+  type: object
+  description: Блок страницы «Список»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 01886dc0-2f0b-7018-af86-04edafe28a26
+    type:
+      type: string
+      enum:
+        - pageBlockList
+    attributes:
+      type: object
+      required:
+        - listType
+        - items
+      properties:
+        listType:
+          type: string
+          description: |-
+            Формат списка
+            
+            - ordered — Нумерованный
+            - unordered — Ненумерованный
+          enum:
+            - ordered
+            - unordered
+        items:
+          type: array
+          description: Значения списка
+          minLength: 1
+          items:
+            type: string
+            minLength: 2
+            example: <b>Один</b>
+  required:
+    - id
+    - type
+    - attributes
+PageBlockImageRow:
+  title: PageBlockImageRow
+  x-stoplight:
+    id: 4esvscrtpoct1
+  type: object
+  description: Блок страницы «Изображения в ряд»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 01884323-2ae4-75f2-b572-056903b264fc
+    type:
+      type: string
+      default: pageBlockImageRow
+      example: pageBlockImageRow
+      enum:
+        - pageBlockImageRow
+    attributes:
+      type: object
+      required:
+        - header
+        - onMouseover
+        - rows
+        - column
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        onMouseover:
+          type: string
+          enum:
+            - blackout
+            - highlighting
+          description: |-
+            Действие «при наведении мышью»
+            
+            - blackout — Затемнять
+            - highlighting — Высветлять
+          example: blackout
+        rows:
+          type: array
+          minItems: 2
+          maxItems: 12
+          items:
+            type: object
+            properties:
+              fileId:
+                type: string
+                example: 01884222-f517-7965-a7ae-36a065d05493
+                description: Идентификатор файла
+                format: uuid
+              link:
+                oneOf:
+                  - $ref: '#/PageBlockLink'
+                  - $ref: '#/NullType'
+            required:
+              - fileId
+              - link
+        column:
+          type: object
+          required:
+            - minWidth
+            - maxWidth
+            - spacing
+            - align
+          properties:
+            minWidth:
+              type: integer
+              description: Минимальная ширина колонки
+              example: 800
+              minimum: 24
+              maximum: 1400
+              nullable: true
+            maxWidth:
+              type: integer
+              example: 900
+              description: Максимальная ширина колонки
+              minimum: 24
+              maximum: 1400
+              nullable: true
+            spacing:
+              type: object
+              description: Расстояние между колонками
+              required:
+                - desktop
+                - adaptive
+              properties:
+                desktop:
+                  type: integer
+                  minimum: 4
+                  maximum: 400
+                  example: 20
+                  description: Расстояние между колонками (десктоп)
+                adaptive:
+                  type: integer
+                  example: 12
+                  minimum: 4
+                  maximum: 400
+                  description: Расстояние между колонками (адаптив и в приложении)
+            align:
+              type: string
+              description: Выравнивание блоков
+              enum:
+                - left
+                - center
+                - right
+  required:
+    - id
+    - type
+    - attributes
+PageBlockSliderImage:
+  title: PageBlockSliderImage
+  x-stoplight:
+    id: 4esvscrtpoct2
+  type: object
+  description: Блок страницы «Слайдер с изображениями»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 01892551-b7f4-7f66-9e2d-d1f4ab510b0a
+    type:
+      type: string
+      enum:
+        - pageBlockSliderImage
+    attributes:
+      type: object
+      required:
+        - header
+        - onMouseover
+        - visibleSlides
+        - rows
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        onMouseover:
+          type: string
+          enum:
+            - blackout
+            - highlighting
+          description: |-
+            Действие «при наведении мышью»
+            
+            - blackout — Затемнять
+            - highlighting — Высветлять
+          example: blackout
+        visibleSlides:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Количество отображаемых элементов
+          example: 2
+        rows:
+          type: array
+          minItems: 2
+          maxItems: 25
+          items:
+            type: object
+            properties:
+              fileId:
+                type: string
+                example: 01884222-f517-7965-a7ae-36a065d05493
+                description: Идентификатор файла
+                format: uuid
+              link:
+                oneOf:
+                  - $ref: '#/PageBlockLink'
+                  - $ref: '#/NullType'
+            required:
+              - fileId
+              - link
+  required:
+    - id
+    - type
+    - attributes
+PageBlockShelfOfProductId:
+  title: PageBlockShelfOfProductId
+  x-stoplight:
+    id: 03ae75cfb7be8
+  type: object
+  description: Блок страницы «Товарная полка из списка идентификаторов товаров»
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: 0188437c-bc9a-7296-8f13-e452254d3997
+    type:
+      type: string
+      default: pageBlockShelfOfProductId
+      example: pageBlockShelfOfProductId
+      enum:
+        - pageBlockShelfOfProductId
+    attributes:
+      type: object
+      required:
+        - header
+        - productId
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        productId:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            example: 2972203
+        sort:
+          type: string
+          enum:
+            - accordingToSequence
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+            - random
+          description: |-
+            Сортировка
+            
+            - accordingToSequence — по порядку
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+            - random — в случайном порядке
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - id
+    - type
+    - attributes
+PageBlockShowcaseFromFilter:
+  title: PageBlockShowcaseFromFilter
+  x-stoplight:
+    id: etip6zur9rzij
+  type: object
+  description: Блок страницы «Каталожная выдача с помощью динамической фильтрации»
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: 01884482-775c-7b79-88f9-1d00ab3d20dc
+      description: Идентификатор
+    type:
+      type: string
+      enum:
+        - pageBlockShowcaseFromFilter
+    attributes:
+      type: object
+      required:
+        - header
+        - appliedFilters
+        - visibleFilters
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        appliedFilters:
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          description: Применённые фильтры
+          items:
+            $ref: '#/PageBlockProductAppliedFilter'
+        visibleFilters:
+          description: Видимые фильтры
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          items:
+            $ref: '#/ProductFilterId'
+        sort:
+          type: string
+          enum:
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+          description: |-
+            Сортировка
+            
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - id
+    - type
+    - attributes
+PageBlockShowcaseOfProductId:
+  title: PageBlockShowcaseOfProductId
+  type: object
+  description: Блок страницы «Каталожная выдача из списка идентификаторов товаров»
+  x-stoplight:
+    id: 10d0488ddbe08
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: 01884482-775c-7b79-88f9-1d00ab3d20dc
+      description: Идентификатор
+    type:
+      type: string
+      enum:
+        - pageBlockShowcaseOfProductId
+    attributes:
+      type: object
+      required:
+        - header
+        - productId
+        - visibleFilters
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        productId:
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          description: Список идентификаторов товаров
+          items:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            example: 2972203
+        visibleFilters:
+          description: Видимые фильтры
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          items:
+            $ref: '#/ProductFilterId'
+        sort:
+          type: string
+          enum:
+            - accordingToSequence
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+          description: |-
+            Сортировка
+            
+            - accordingToSequence — по порядку
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - id
+    - type
+    - attributes
+PageBlockShowcaseOfProductSet:
+  title: PageBlockShowcaseOfProductSet
+  type: object
+  description: Блок страницы «Каталожная выдача с загрузкой товаров через файл»
+  properties:
+    id:
+      type: string
+      format: uuid
+      example: 01884482-775c-7b79-88f9-1d00ab3d20dc
+      description: Идентификатор
+    type:
+      type: string
+      enum:
+        - pageBlockShowcaseOfProductSet
+    attributes:
+      type: object
+      required:
+        - header
+        - productSet
+        - appliedFilters
+        - visibleFilters
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            -   $ref: '#/LinkableHeader'
+            -   $ref: '#/NullType'
+        productSet:
+          type: string
+          format: uuid
+          example: 01884482-775c-7b79-88f9-1d00ab3d20dc
+          description: Идентификатор набора товаров
+        appliedFilters:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          description: Применённые фильтры
+          items:
+            $ref: '#/PageBlockProductAppliedFilter'
+        visibleFilters:
+          description: Видимые фильтры
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          items:
+            $ref: '#/ProductFilterId'
+        sort:
+          type: string
+          enum:
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+          description: |-
+            Сортировка
+            
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - id
+    - type
+    - attributes
+PageBlockHighlightLinks:
+  title: PageBlockHighlightLinks
+  type: object
+  description: Блок страницы «Ссылки-хайлайты»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 01886dc0-2f0b-7018-af86-04edafe28a26
+    type:
+      type: string
+      enum:
+        - pageBlockHighlightLinks
+    attributes:
+      type: object
+      required:
+        - header
+        - align
+        - backgroundColor
+        - textColor
+        - items
+      properties:
+        header:
+          oneOf:
+            -   $ref: '#/LinkableHeader'
+            -   $ref: '#/NullType'
+        align:
+          $ref: '#/BlockAlign'
+        backgroundColor:
+          $ref: '#/BackgroundColor'
+        textColor:
+          $ref: '#/OpaqueColor'
+        items:
+          type: array
+          description: Список ссылок
+          minLength: 1
+          maxLength: 12
+          items:
+            $ref: '#/HighlightLink'
+  required:
+    - id
+    - type
+    - attributes
+PageBlockVideo:
+  title: PageBlockVideo
+  type: object
+  description: Блок страницы «Видео»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 018bcd8f-3e1a-7a9a-8f96-c04cdac9ddce
+    type:
+      type: string
+      enum:
+        - pageBlockVideo
+    attributes:
+      type: object
+      required:
+        - header
+        - align
+        - platform
+        - videoId
+      properties:
+        header:
+          oneOf:
+            -   $ref: '#/LinkableHeader'
+            -   $ref: '#/NullType'
+        align:
+          enum:
+            - left
+            - center
+            - right
+            - expand
+          description: |-
+            Выравнивание
+            
+            - left — По левой стороне
+            - center — По центру
+            - right — По правой стороне
+            - expand — На всю ширину
+        platform:
+          type: string
+          enum:
+            - youtube
+            - rutube
+            - vkvideo
+            - yandexzen
+          description: Видеохостинг, на котором хранится оригинал видео
+        videoId:
+          type: string
+          example: jNQXAC9IVRw
+          minLength: 3
+          maxLength: 36
+          description: Идентификатор видео в источнике
+  required:
+    - id
+    - type
+    - attributes
+PageBlockProduct:
+  title: PageBlockProduct
+  type: object
+  description: Блок страницы «Товар»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 018bcd8f-3e1a-7a9a-8f96-c04cdac9ddce
+    type:
+      type: string
+      enum:
+        - pageBlockProduct
+    attributes:
+      type: object
+      required:
+        - viewMode
+        - randomLimitQuantity
+        - items
+      properties:
+        viewMode:
+          enum:
+            - all
+            - randomWithLimit
+          description: |-
+            Режим отображения
+            
+            - all — Все товары из списка по порядку
+            - randomWithLimit — Показывать ограниченное количество товаров случайным образом
+        randomLimitQuantity:
+          type: integer
+          minimum: 1
+          description: Количество отображаемых товаров при рандомном отображении
+          nullable: true
+        items:
+          type: array
+          description: Список товаров
+          minLength: 1
+          maxLength: 100
+          items:
+            $ref: '#/PageBlockProductItem'
+  required:
+    - id
+    - type
+    - attributes
+PageBlockForm:
+  title: PageBlockForm
+  x-stoplight:
+    id: ea5590f1a2228
+  type: array
+  x-internal: true
+  items:
+    oneOf:
+      - $ref: '#/PageBlockBackgroundForm'
+      - $ref: '#/PageBlockBreadcrumbsForm'
+      - $ref: '#/PageBlockParagraphForm'
+      - $ref: '#/PageBlockHeaderForm'
+      - $ref: '#/PageBlockListForm'
+      - $ref: '#/PageBlockImageRowForm'
+      - $ref: '#/PageBlockShelfOfProductIdForm'
+      - $ref: '#/PageBlockShowcaseFromFilterForm'
+      - $ref: '#/PageBlockShowcaseOfProductIdForm'
+      - $ref: '#/PageBlockShowcaseOfProductSetForm'
+      - $ref: '#/PageBlockSliderImageForm'
+      - $ref: '#/PageBlockBannerCarouselForm'
+      - $ref: '#/PageBlockPromotionRulesForm'
+      - $ref: '#/PageBlockHighlightLinksForm'
+      - $ref: '#/PageBlockVideoForm'
+      - $ref: '#/PageBlockProductForm'
+PageBlockLinkForm:
+  oneOf:
+    - description: Внутренняя ссылка
+      properties:
+        type:
+          type: string
+          enum:
+            - internal
+          default: internal
+          example: internal
+        pageId:
+          type: string
+          description: Идентификатор страницы
+          example: 01876f45-d2da-7636-aca0-28827c4c9c44
+      required:
+        - type
+        - pageId
+    - description: Внешняя ссылка
+      properties:
+        type:
+          type: string
+          description: external
+        link:
+          type: string
+          format: uri
+          description: Ссылка
+          example: 'https://old.chitai-gorod.ru/school/1'
+      required:
+        - type
+        - link
+  type: object
+  title: PageBlockLinkForm
+  x-internal: true
+PageBlockBackgroundForm:
+  type: object
+  title: PageBlockBackgroundForm
+  x-stoplight:
+    id: 255064f9edada
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockBackground
+      default: pageBlockBackground
+      example: pageBlockBackground
+    configuration:
+      type: object
+      required:
+        - header
+        - subheader
+        - link
+        - size
+        - textAlign
+        - backgroundColor
+        - imageDesktop
+        - imageAdaptive
+        - showShareLink
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/ColorableHeader'
+            - $ref: '#/NullType'
+        subheader:
+          oneOf:
+            - $ref: '#/ColorableSubHeader'
+            - $ref: '#/NullType'
+        link:
+          oneOf:
+            - $ref: '#/PageBlockLink'
+            - $ref: '#/NullType'
+        size:
+          $ref: '#/BlockBackgroundSize'
+        textAlign:
+          $ref: '#/TextAlign'
+        backgroundColor:
+          $ref: '#/BackgroundColor'
+        imageDesktop:
+          type: string
+          description: Изображение на ПК
+          format: uuid
+          example: 0188f3cf-1e67-78ba-b754-e7f13bd1dc9f
+          nullable: true
+        imageAdaptive:
+          type: string
+          description: Изображение на адаптиве
+          example: 0188f3c7-e33d-7fd3-ac02-18b895ab9fc2
+          format: uuid
+          nullable: true
+        showShareLink:
+          type: boolean
+          description: Отображать ссылку «Поделиться с друзьями»
+  required:
+    - type
+    - configuration
+PageBlockBreadcrumbsForm:
+  title: PageBlockBreadcrumbsForm
+  x-stoplight:
+    id: 24f012ae1349d
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockBreadcrumbs
+      default: pageBlockBreadcrumbs
+      example: pageBlockBreadcrumbs
+    configuration:
+      type: object
+      required:
+        - parent
+      properties:
+        parent:
+          type: string
+          example: 01876f45-d2da-7636-aca0-28827c4c9c44
+          format: uuid
+          description: Родительская страница
+  required:
+    - type
+    - configuration
+PageBlockParagraphForm:
+  title: PageBlockParagraphForm
+  x-stoplight:
+    id: 05bf62e741da1
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockParagraph
+      default: pageBlockParagraph
+      example: pageBlockParagraph
+    configuration:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          example: <b>4. Сатира или нечто большее</b>
+          minLength: 2
+          maxLength: 18384
+  required:
+    - type
+    - configuration
+PageBlockHeaderForm:
+  title: PageBlockHeaderForm
+  type: object
+  x-stoplight:
+    id: 066f7f162e524
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockHeader
+    configuration:
+      type: object
+      required:
+        - text
+        - level
+      properties:
+        text:
+          type: string
+          example: Шаг 4. Знакомимся с анатомией заблуждений
+          minLength: 2
+          maxLength: 256
+        level:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+  required:
+    - type
+    - configuration
+PageBlockListForm:
+  title: PageBlockListForm
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockList
+    configuration:
+      type: object
+      required:
+        - listType
+        - items
+      properties:
+        listType:
+          type: string
+          description: |-
+            Формат списка
+            
+            - ordered — Нумерованный
+            - unordered — Ненумерованный
+          enum:
+            - ordered
+            - unordered
+        items:
+          type: array
+          description: Значения списка
+          minLength: 1
+          items:
+            type: string
+            minLength: 2
+            example: <b>Один</b>
+  required:
+    - type
+    - configuration
+PageBlockImageRowForm:
+  type: object
+  title: PageBlockImageRowForm
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockImageRow
+      default: pageBlockImageRow
+      example: pageBlockImageRow
+    configuration:
+      type: object
+      required:
+        - header
+        - onMouseover
+        - rows
+        - column
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        onMouseover:
+          type: string
+          description: |-
+            Действие «при наведении мышью»
+            
+            - blackout — Затемнять
+            - highlighting — Высветлять
+          enum:
+            - blackout
+            - highlighting
+          example: blackout
+        rows:
+          type: array
+          minItems: 2
+          maxItems: 12
+          items:
+            type: object
+            properties:
+              fileId:
+                type: string
+                format: uuid
+                example: 01884222-f517-7965-a7ae-36a065d05493
+              link:
+                oneOf:
+                  - $ref: '#/PageBlockLinkForm'
+                  - $ref: '#/NullType'
+            required:
+              - fileId
+              - link
+        column:
+          type: object
+          required:
+            - minWidth
+            - maxWidth
+            - spacing
+            - align
+          properties:
+            minWidth:
+              type: integer
+              description: Минимальная ширина колонки
+              example: 800
+              minimum: 24
+              maximum: 1400
+              nullable: true
+            maxWidth:
+              type: integer
+              example: 900
+              description: Максимальная ширина колонки
+              minimum: 24
+              maximum: 1400
+              nullable: true
+            spacing:
+              type: object
+              description: Расстояние между колонками
+              required:
+                - desktop
+                - adaptive
+              properties:
+                desktop:
+                  type: integer
+                  minimum: 4
+                  maximum: 400
+                  example: 20
+                  description: Расстояние между колонками (десктоп)
+                adaptive:
+                  type: integer
+                  example: 12
+                  minimum: 4
+                  maximum: 400
+                  description: Расстояние между колонками (адаптив и в приложении)
+            align:
+              type: string
+              description: Выравнивание блоков
+              enum:
+                - left
+                - center
+                - right
+  required:
+    - type
+    - configuration
+PageBlockSliderImageForm:
+  type: object
+  title: PageBlockSliderImageForm
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockSliderImage
+    configuration:
+      type: object
+      required:
+        - header
+        - onMouseover
+        - visibleSlides
+        - rows
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        onMouseover:
+          type: string
+          description: |-
+            Действие «при наведении мышью»
+            
+            - blackout — Затемнять
+            - highlighting — Высветлять
+          enum:
+            - blackout
+            - highlighting
+          example: blackout
+        visibleSlides:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Количество отображаемых элементов
+          example: 2
+        rows:
+          type: array
+          minItems: 2
+          maxItems: 25
+          items:
+            type: object
+            properties:
+              fileId:
+                type: string
+                format: uuid
+                example: 01884222-f517-7965-a7ae-36a065d05493
+              link:
+                oneOf:
+                  - $ref: '#/PageBlockLinkForm'
+                  - $ref: '#/NullType'
+            required:
+              - fileId
+              - link
+  required:
+    - type
+    - configuration
+PageBlockBannerCarouselForm:
+  type: object
+  title: PageBlockBannerCarouselForm
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockBannerCarousel
+    configuration:
+      type: object
+      required:
+        - header
+        - delay
+        - navigationType
+        - loop
+        - banners
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        delay:
+          type: integer
+          description: Время перелистывания в секундах
+          minimum: 1
+        navigationType:
+          type: string
+          description: Способ навигации
+          enum:
+            - button
+            - pointer
+            - buttonAndPointer
+        loop:
+          type: boolean
+          description: Цикличная прокрутка
+        banners:
+          type: array
+          description: Список банеров
+          minLength: 1
+          maxLength: 30
+          items:
+            $ref: '#/PageBlockBannerForm'
+  required:
+    - type
+    - configuration
+PageBlockBannerForm:
+  title: PageBlockBannerForm
+  type: object
+  properties:
+    imageDesktop:
+      type: string
+      description: Изображение на ПК
+      format: uuid
+      example: 0188f3cf-1e67-78ba-b754-e7f13bd1dc9f
+    imageAdaptive:
+      type: string
+      description: Изображение на адаптиве
+      example: 0188f3c7-e33d-7fd3-ac02-18b895ab9fc2
+      format: uuid
+    link:
+      oneOf:
+        -   $ref: '#/PageBlockLinkForm'
+        -   $ref: '#/NullType'
+    visibleFrom:
+      type: string
+      description: Отображать с даты
+      example: '2016-04-22T00:01:00+03:00'
+      format: date-time
+      nullable: true
+    visibleTo:
+      type: string
+      description: Скрыть с даты
+      example: '2016-04-22T00:02:00+03:00'
+      format: date-time
+      nullable: true
+  required:
+    - imageDesktop
+    - imageAdaptive
+    - link
+    - visibleFrom
+    - visibleTo
+PageBlockPromotionRulesForm:
+  type: object
+  title: PageBlockPromotionRulesForm
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockPromotionRules
+    configuration:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          description: Pdf файл с правилами акции
+          format: uuid
+  required:
+    - type
+    - configuration
+PageBlockShelfOfProductIdForm:
+  type: object
+  title: PageBlockShelfOfProductIdForm
+  x-stoplight:
+    id: bf5999f48ad88
+  properties:
+    type:
+      type: string
+      default: pageBlockShelfOfProductId
+      example: pageBlockShelfOfProductId
+      enum:
+        - pageBlockShelfOfProductId
+    configuration:
+      type: object
+      required:
+        - header
+        - productId
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        productId:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            example: 2972203
+        sort:
+          type: string
+          enum:
+            - accordingToSequence
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+            - random
+          description: |-
+            Сортировка
+            
+            - accordingToSequence — по порядку
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+            - random — в случайном порядке
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - type
+    - configuration
+PageBlockShowcaseFromFilterForm:
+  title: PageBlockShowcaseFromFilterForm
+  type: object
+  x-stoplight:
+    id: 10d0488ddbe08
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockShowcaseFromFilter
+    configuration:
+      type: object
+      required:
+        - header
+        - appliedFilters
+        - visibleFilters
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        appliedFilters:
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          description: Применённые фильтры
+          items:
+            $ref: '#/PageBlockProductAppliedFilter'
+        visibleFilters:
+          description: Видимые фильтры
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          items:
+            $ref: '#/ProductFilterId'
+        sort:
+          type: string
+          enum:
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+          description: |-
+            Сортировка
+            
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - type
+    - configuration
+PageBlockShowcaseOfProductIdForm:
+  title: PageBlockShowcaseOfProductIdForm
+  type: object
+  x-stoplight:
+    id: 66285c243fe44
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockShowcaseOfProductId
+    configuration:
+      type: object
+      required:
+        - header
+        - productId
+        - visibleFilters
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        productId:
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          description: Список идентификаторов товаров
+          items:
+            type: integer
+            minimum: 1
+            maximum: 2147483647
+            example: 2972203
+        visibleFilters:
+          description: Видимые фильтры
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          items:
+            $ref: '#/ProductFilterId'
+        sort:
+          type: string
+          enum:
+            - accordingToSequence
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+          description: |-
+            Сортировка
+            
+            - accordingToSequence — по порядку
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - type
+    - configuration
+PageBlockShowcaseOfProductSetForm:
+  title: PageBlockShowcaseOfProductSetForm
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockShowcaseOfProductSet
+    configuration:
+      type: object
+      required:
+        - header
+        - productSet
+        - appliedFilters
+        - visibleFilters
+        - sort
+        - orderedProductId
+      properties:
+        header:
+          oneOf:
+            -   $ref: '#/LinkableHeader'
+            -   $ref: '#/NullType'
+        productSet:
+          type: string
+          format: uuid
+          example: 01884482-775c-7b79-88f9-1d00ab3d20dc
+          description: Идентификатор набора товаров
+        appliedFilters:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          description: Применённые фильтры
+          items:
+            $ref: '#/PageBlockProductAppliedFilter'
+        visibleFilters:
+          description: Видимые фильтры
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          items:
+            $ref: '#/ProductFilterId'
+        sort:
+          type: string
+          enum:
+            - relevance
+            - cheapness
+            - priceAsc
+            - priceDesc
+            - reviewsDesc
+            - newness
+          description: |-
+            Сортировка
+            
+            - relevance — по популярности
+            - cheapness — по цене (устарело; вместо этого варианта используйте priceAsc)
+            - priceAsc - по возрастанию цены
+            - priceDesc - по убыванию цены
+            - reviewsDesc - по убыванию отзывов
+            - newness — по новизне
+        orderedProductId:
+          $ref: '#/OrderedProductId'
+  required:
+    - type
+    - configuration
+PageBlockHighlightLinksForm:
+  title: PageBlockHighlightLinksForm
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockHighlightLinks
+    configuration:
+      type: object
+      required:
+        - header
+        - align
+        - backgroundColor
+        - textColor
+        - items
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        align:
+          $ref: '#/BlockAlign'
+        backgroundColor:
+          $ref: '#/BackgroundColor'
+        textColor:
+          $ref: '#/OpaqueColor'
+        items:
+          type: array
+          description: Список ссылок
+          minLength: 1
+          maxLength: 12
+          items:
+            $ref: '#/HighlightLink'
+  required:
+    - type
+    - configuration
+PageBlockVideoForm:
+  title: PageBlockVideoForm
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockVideo
+    configuration:
+      type: object
+      required:
+        - header
+        - align
+        - platform
+        - videoId
+      properties:
+        header:
+          oneOf:
+            -   $ref: '#/LinkableHeader'
+            -   $ref: '#/NullType'
+        align:
+          enum:
+            - left
+            - center
+            - right
+            - expand
+          description: |-
+            Выравнивание
+            
+            - left — По левой стороне
+            - center — По центру
+            - right — По правой стороне
+            - expand — На всю ширину
+        platform:
+          type: string
+          enum:
+            - youtube
+            - rutube
+            - vkvideo
+            - yandexzen
+          description: Видеохостинг, на котором хранится оригинал видео
+        videoId:
+          type: string
+          example: jNQXAC9IVRw
+          minLength: 3
+          maxLength: 36
+          description: Идентификатор видео в источнике
+  required:
+    - type
+    - configuration
+PageBlockProductForm:
+  title: PageBlockProductForm
+  type: object
+  properties:
+    type:
+      type: string
+      enum:
+        - pageBlockProduct
+    configuration:
+      type: object
+      required:
+        - viewMode
+        - randomLimitQuantity
+        - items
+      properties:
+        viewMode:
+          enum:
+            - all
+            - randomWithLimit
+          description: |-
+            Режим отображения
+            
+            - all — Все товары из списка по порядку
+            - randomWithLimit — Показывать ограниченное количество товаров случайным образом
+        randomLimitQuantity:
+          type: integer
+          minimum: 1
+          description: Количество отображаемых товаров при рандомном отображении
+          nullable: true
+        items:
+          type: array
+          description: Список товаров
+          minLength: 1
+          maxLength: 100
+          items:
+            $ref: '#/PageBlockProductItem'
+PageBlockProductAppliedFilter:
+  title: PageBlockProductAppliedFilter
+  x-stoplight:
+    id: e5a653yqljau8
+  type: object
+  properties:
+    id:
+      $ref: '#/ProductFilterId'
+    type:
+      $ref: '#/ProductFilterType'
+    value:
+      oneOf:
+        - $ref: '#/ProductFilterListValue'
+        - $ref: '#/ProductFilterBoolValue'
+        - $ref: '#/ProductFilterRangeValue'
+        - $ref: '#/ProductFilterConcreteValue'
+  required:
+    - id
+    - type
+    - value
+PageBlockBannerCarousel:
+  title: PageBlockBannerCarousel
+  type: object
+  description: Блок страницы «Баннерная карусель»
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 01884323-2ae4-75f2-b572-056903b264fc
+    type:
+      type: string
+      enum:
+        - pageBlockBannerCarousel
+    attributes:
+      type: object
+      properties:
+        header:
+          oneOf:
+            - $ref: '#/LinkableHeader'
+            - $ref: '#/NullType'
+        delay:
+          type: integer
+          description: Время перелистывания в секундах
+          minimum: 1
+        navigationType:
+          type: string
+          description: Способ навигации
+          enum:
+            - button
+            - pointer
+            - buttonAndPointer
+        loop:
+          type: boolean
+          description: Цикличная прокрутка
+        banners:
+          type: array
+          description: Список банеров
+          minLength: 1
+          maxLength: 30
+          items:
+            $ref: '#/PageBlockBanner'
+      required:
+        - header
+        - delay
+        - navigationType
+        - loop
+        - banners
+  required:
+    - id
+    - type
+    - attributes
+PageBlockBanner:
+  title: PageBlockBanner
+  type: object
+  properties:
+    imageDesktop:
+      type: string
+      description: Изображение на ПК
+      format: uuid
+      example: 0188f3cf-1e67-78ba-b754-e7f13bd1dc9f
+    imageAdaptive:
+      type: string
+      description: Изображение на адаптиве
+      example: 0188f3c7-e33d-7fd3-ac02-18b895ab9fc2
+      format: uuid
+    link:
+      oneOf:
+        - $ref: '#/PageBlockLink'
+        - $ref: '#/NullType'
+    visibleFrom:
+      type: string
+      description: Отображать с даты
+      example: '2016-04-22T00:01:00+03:00'
+      format: date-time
+      nullable: true
+    visibleTo:
+      type: string
+      description: Скрыть с даты
+      example: '2016-04-22T00:02:00+03:00'
+      format: date-time
+      nullable: true
+  required:
+    - imageDesktop
+    - imageAdaptive
+    - link
+    - visibleFrom
+    - visibleTo
+PageBlockPromotionRules:
+  title: PageBlockPromotionRules
+  description: Блок страницы «Правила акции»
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Идентификатор
+      example: 01884323-2ae4-75f2-b572-056903b264fc
+    type:
+      type: string
+      enum:
+        - pageBlockPromotionRules
+    attributes:
+      type: object
+      properties:
+        file:
+          type: string
+          description: Pdf файл с правилами акции
+          format: uuid
+      required:
+        - file
+  required:
+    - id
+    - type
+    - attributes
+ProductSet:
+  title: ProductSet
+  type: object
+  properties:
+    id:
+      type: string
+      minLength: 36
+      maxLength: 36
+      example: 01876f45-d2da-7636-aca0-28827c4c9c44
+      format: uuid
+      description: Идентификатор
+    type:
+      type: string
+      enum:
+        - productSet
+    attributes:
+      type: object
+      required:
+        - externalId
+        - name
+        - sourceFile
+        - loadStatus
+        - productCount
+      properties:
+        externalId:
+          type: integer
+          description: Идентификатор набора в Либре
+        name:
+          type: string
+          example: Комиксы DC
+          minLength: 1
+          maxLength: 256
+        sourceFile:
+          type: string
+          example: https://ndf.book24.ru/docs/school-new.csv
+          description: Путь к файлу набора
+          minLength: 1
+        loadStatus:
+          type: string
+          default: new
+          enum:
+            - new
+            - loading
+            - loaded
+            - failed
+          description: Статус загрузки набора товаров
+        productCount:
+          type: integer
+          minimum: 0
+          description: Количество товаров в наборе
+PageProductSet:
+  title: PageProductSet
+  type: object
+  properties:
+    id:
+      type: string
+      minLength: 36
+      maxLength: 36
+      example: 01876f45-d2da-7636-aca0-28827c4c9c44
+      format: uuid
+      description: Идентификатор
+    type:
+      type: string
+      enum:
+        - pageProductSet
+    attributes:
+      type: object
+      required:
+        - externalId
+        - name
+        - sourceFile
+        - createdAt
+        - updatedAt
+        - loadStatus
+        - productCount
+      properties:
+        externalId:
+          type: integer
+          description: Идентификатор набора в Либре
+        name:
+          type: string
+          example: Комиксы DC
+          minLength: 1
+          maxLength: 256
+        sourceFile:
+          type: string
+          example: https://ndf.book24.ru/docs/school-new.csv
+          description: Путь к файлу набора
+          minLength: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: '2016-04-22T00:00:00+03:00'
+          description: Дата добавления
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2016-04-22T00:00:00+03:00'
+          description: Дата обновления
+        loadStatus:
+          type: string
+          default: new
+          enum:
+            - new
+            - loading
+            - loaded
+            - failed
+          description: Статус загрузки набора товаров
+        productCount:
+          type: integer
+          minimum: 0
+          description: Количество товаров в наборе
+    relationships:
+      type: object
+      properties:
+        page:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - page
+                id:
+                  type: string
+                  minLength: 36
+                  maxLength: 36
+                  example: 01876f45-d2da-7636-aca0-28827c4c9c44
+                  format: uuid
+  required:
+    - id
+    - type
+    - attributes
+    - relationships
+PageProductSetIncluded:
+  title: PageProductSetIncluded
+  type: array
+  x-internal: true
+  description: «Включения» набора товаров страницы
+  items:
+    oneOf:
+      -   $ref: '#/ConstructorPage'
+ProductFilterId:
+  title: ProductFilterId
+  x-stoplight:
+    id: btsongoi9biky
+  type: string
+  example: authors
+  minLength: 2
+  maxLength: 128
+  pattern: '^[a-zA-Z0-9]+$'
+  description: Поле для фильтрации
+ProductFilterType:
+  type: string
+  enum:
+    - bool
+    - range
+    - listValues
+    - suggestionListValues
+    - concreteValue
+  description: Тип фильтра
+  title: ProductFilterType
+ProductFilterListValue:
+  type: array
+  minItems: 1
+  maxItems: 100
+  items:
+    type: integer
+    minimum: 1
+    maximum: 2147483647
+  description: Список значений поля для фильтрации
+  title: ProductFilterListValue
+ProductFilterBoolValue:
+  type: boolean
+  description: Булево значение поля для фильтрации
+  title: ProductFilterBoolValue
+ProductFilterConcreteValue:
+  type: string
+  minLength: 1
+  description: Значение поля для фильтрации
+  title: ProductFilterConcreteValue
+ProductFilterRangeValue:
+  type: object
+  properties:
+    min:
+      type: integer
+      minimum: 1
+      maximum: 2147483647
+      description: Минимальное значение
+    max:
+      type: integer
+      minimum: 1
+      maximum: 2147483647
+      description: Максимальное значение
+  description: Значение поля для фильтрации
+  title: ProductFilterRangeValue
+ProductFilter:
+  title: ProductFilter
+  x-stoplight:
+    id: tr6rcp095gjjy
+  type: object
+  description: Фильтр списка товаров
+  properties:
+    id:
+      $ref: '#/ProductFilterId'
+    type:
+      type: string
+      enum:
+        - productFilter
+    attributes:
+      type: object
+      required:
+        - title
+        - filterType
+        - hasFacet
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: Авторы
+          description: Название фильтра
+        filterType:
+          $ref: '#/ProductFilterType'
+        hasFacet:
+          type: boolean
+          description: Флаг наличия фасета для фильтра
+  required:
+    - id
+    - type
+    - attributes
+ProductFilterEntityValues:
+  title: ProductFilterEntityValues
+  type: object
+  description: Значения сущностей фильтра списка товаров
+  properties:
+    id:
+      $ref: '#/ProductFilterId'
+    type:
+      type: string
+      enum:
+        - productFilterEntityValues
+    attributes:
+      type: object
+      required:
+        - filterType
+        - values
+      properties:
+        filterType:
+          type: string
+          enum:
+            - ratingStars
+            - categories
+            - range
+            - bool
+            - listValues
+            - suggestionListValues
+          description: Тип фильтра
+        values:
+          type: array
+          items:
+            type: object
+            required:
+              - value
+              - title
+            properties:
+              value:
+                type: integer
+                minimum: 1
+                maximum: 2147483647
+                example: 100
+                description: Идентификатор значения/сущности
+              title:
+                type: string
+                minLength: 1
+                example: Пушкин
+                description: Текстовое представление сущности
+  required:
+    - id
+    - type
+    - attributes
+Product:
+  title: Product
+  description: Товар
+  type: object
+  properties:
+    id:
+      $ref: '#/ProductId'
+    type:
+      type: string
+      enum:
+        - product
+    attributes:
+      type: object
+      required:
+        - name
+        - authors
+        - image
+        - description
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 512
+          example: Гарри Поттер и Кубок огня
+          description: Название товара
+        authors:
+          type: string
+          minLength: 1
+          maxLength: 512
+          example: Харальд Хорф, Пушкин А.С.
+          description: Список авторов через запятую
+          nullable: true
+        image:
+          type: string
+          minLength: 1
+          example: nomenclature/29/099/2909911.jpg
+          description: Обложка - основное изображение товара (относительная ссылка)
+          nullable: true
+        description:
+          type: string
+          minLength: 1
+          maxLength: 8192
+          example: 'Гарри Поттеру предстоит четвертый год обучения в Школе чародейства и волшебства “Хогвартс”. Новые заклинания, новые зелья, новые учителя, новые предметы… Все это знакомо, и Гарри с нетерпением ожидает начала учебного года. Но на школу внезапно обрушивается потрясающая новость: в этом году в Хогвартсе будет проходить Турнир Трех Волшебников, и конечно же, каждый хочет принять в нем участие…'
+          description: Описание товара
+          nullable: true
+ProductId:
+  type: integer
+  minimum: 1
+  description: Идентификатор товара
+
+PromotionAdvertisementMarker:
+  type: object
+  description: Данные рекламного маркера
+  properties:
+    advertiser:
+      type: string
+      description: Название рекламодателя
+      maxLength: 100
+      nullable: true
+    description:
+      type: string
+      description: Рекламный текст
+      maxLength: 100
+      nullable: true
+
+PromotionTargetAuditory:
+  type: string
+  enum:
+    - all
+    - authorized
+  default: all
+  description: |-
+    На кого нацелена акция
+    - all — На всех
+    - authorized — Только для авторизованных пользователей

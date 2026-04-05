@@ -9,8 +9,9 @@ import (
 )
 
 type Config struct {
-	Web   WEB  `env:",prefix=WEB_"`
-	Debug bool `env:"DEBUG"`
+	Web          WEB    `env:",prefix=WEB_"`
+	Debug        bool   `env:"DEBUG"`
+	AppNamespace string `env:"APP_NAMESPACE"`
 }
 
 type WEB struct {

@@ -1,0 +1,12 @@
+Registration:
+  required: [city, token, user, countryShort]
+  properties:
+    city:
+      $ref: './AuthCity.yaml#/AuthCity'
+    token:
+      $ref: './AuthToken.yaml#/AuthToken'
+    user:
+      $ref: './AuthUserShort.yaml#/AuthUserShort'
+    countryShort:
+      $ref: './RegisterCountryShort.yaml#/RegisterCountryShort'
+  type: object

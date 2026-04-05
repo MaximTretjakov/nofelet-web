@@ -1,0 +1,16 @@
+CityCode:
+  City:
+    name: city
+    in: query
+    required: true
+    schema:
+      type: integer
+      example: 213
+
+  CityID:
+    name: cityId
+    description: ID города
+    in: query
+    required: true
+    schema:
+      $ref: "./User.yaml#/UserCityId"
