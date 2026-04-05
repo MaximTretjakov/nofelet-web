@@ -1,4 +1,4 @@
-package signaling
+package web
 
 import (
 	"github.com/MaximTretjakov/nofelet-web/internal/dependency"
