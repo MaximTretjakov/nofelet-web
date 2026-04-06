@@ -1,0 +1,19 @@
+PostRegistrationRequestData:
+  description: Регистрация нового пользователя
+  content:
+    application/json:
+      schema:
+        $ref: '#/RequestBody'
+
+RequestBody:
+  description: Тело запроса
+  required: [ login, password ]
+  properties:
+    login:
+      type: string
+      description: Логин пользователя
+      example: test@gmail.com
+    password:
+      type: string
+      description: Пароль пользователя
+      example: qwerty

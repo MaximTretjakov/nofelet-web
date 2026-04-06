@@ -1,12 +1,14 @@
-Registration:
-  required: [city, token, user, countryShort]
+RegistrationResult:
+  description: OK
+  required: [data]
   properties:
-    city:
-      $ref: './AuthCity.yaml#/AuthCity'
-    token:
-      $ref: './AuthToken.yaml#/AuthToken'
-    user:
-      $ref: './AuthUserShort.yaml#/AuthUserShort'
-    countryShort:
-      $ref: './RegisterCountryShort.yaml#/RegisterCountryShort'
+    data:
+      $ref: '#/RegistrationResultData'
+
+RegistrationResultData:
   type: object
+  required: [result]
+  properties:
+    result:
+      type: boolean
+      example: true

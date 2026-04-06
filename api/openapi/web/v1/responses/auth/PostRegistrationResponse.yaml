@@ -3,4 +3,4 @@ PostRegistrationResponse:
   content:
     application/json:
       schema:
-        $ref: '../../components/schemas/auth/Login.yaml#/Login'
+        $ref: '../../components/schemas/auth/Registration.yaml#/RegistrationResult'

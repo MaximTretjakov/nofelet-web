@@ -9,10 +9,10 @@ servers:
 paths:
   # Регистрация пользователя
   /api/v1/registration:
-    $ref: 'routes/Registration.yaml#/paths/RegistrationRequestData'
+    $ref: 'routes/Registration.yaml#/paths/PostRegistrationRequestData'
 
   # Авторизация
   /api/v1/auth:
-    $ref: "routes/Auth.yaml#/paths/Auth"
+    $ref: "routes/Auth.yaml#/paths/PostAuth"
   /api/v1/logout:
-    $ref: "routes/Logout.yaml#/paths/Logout"
+    $ref: "routes/Logout.yaml#/paths/PutLogout"
