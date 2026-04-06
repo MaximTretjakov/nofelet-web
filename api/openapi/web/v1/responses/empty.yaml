@@ -1,5 +1,0 @@
-EmptySuccessResponse:
-  description: Успешный ответ
-
-EmptyUnauthorizedResponse:
-  description: Пользователь не авторизован

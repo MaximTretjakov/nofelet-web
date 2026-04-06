@@ -1,21 +1,29 @@
 paths:
-  RegistrationRequestData:
+  PostRegistrationRequestData:
     post:
       tags:
-        - Авторизация
+        - Регистрация нового пользователя
       security:
         - BearerAuth: []
-      summary: Анонимная авторизация
-      description: Регистрация анонимного пользователя
+      summary: Регистрация
+      description: Регистрация пользователя
       operationId: RegistrationRequestData
+      requestBody:
+        $ref: "../requests/registration/PostRegistrationRequestData.yaml#/PostRegistrationRequestData"
       responses:
         "201":
           $ref: "../responses/auth/PostRegistrationResponse.yaml#/PostRegistrationResponse"
+        '400':
+          $ref: "../responses/errors/SimpleErrorResponse.yaml#/SimpleErrorResponse"
 
 parameters:
-  RefreshToken:
-    name: refreshToken
-    in: query
+  UserCredentials:
+    name: landingID
+    in: path
+    description: Идентификатор лендинга
     required: true
     schema:
-      type: string
+      type: integer
+      example: 5
+    x-oapi-codegen-extra-tags:
+      binding: required

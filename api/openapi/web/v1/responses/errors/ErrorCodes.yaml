@@ -35,8 +35,8 @@ Forbidden:
             description: Текст ошибки
             example: Текст ошибки
 
-GatewayTimeout:
-  description: Gateway Time Out
+WebTimeout:
+  description: Web Time Out
   content:
     application/json:
       schema:

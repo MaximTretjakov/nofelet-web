@@ -1,13 +1,13 @@
 paths:
-  Logout:
+  PutLogout:
     put:
       tags:
         - Авторизация
       security:
         - BearerAuth: [ ]
       summary: Выход из профиля
-      description: Выход из профиля, получение гостевого токена.
-      operationId: Logout
+      description: Выход из профиля, получение токена.
+      operationId: PutLogout
       parameters:
         - $ref: "#/parameters/RefreshToken"
       responses:
