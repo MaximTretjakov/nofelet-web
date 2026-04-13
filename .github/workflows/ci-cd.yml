@@ -1,0 +1,105 @@
+name: Nofelet-web pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  APP_PATH: ${{ vars.APP_PATH }}
+
+jobs:
+  # 1. Джоба-заглушка для тестов
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run tests (stub)
+        run: |
+          echo "Running tests..."
+          # Здесь будет go test ./...
+          echo "Tests passed (stub)"
+        continue-on-error: true # Позволяет пайплайну идти дальше, даже если тесты упадут
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: test # Ждем завершения тестов
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          # Копируем конфиг докера и папку с sql-миграциями
+          source: "docker-compose.yml,migrations/"
+          target: "${{ env.APP_PATH }}"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd ${{ env.APP_PATH }}
+            
+            # 1. Авторизация
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+            
+            # 2. Обновление образа
+            docker compose pull
+            
+            # 3. ЗАПУСК МИГРАЦИЙ
+            export GOOSE_DRIVER=postgres
+            export GOOSE_DBSTRING="${{ secrets.DB_DSN }}" 
+            goose -dir ./migrations up
+            
+            # 4. Перезапуск контейнеров
+            docker compose up -d
+            
+            # 5. Очистка
+            docker image prune -f

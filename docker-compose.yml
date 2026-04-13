@@ -5,15 +5,11 @@ services:
       image: postgres:15-alpine
       container_name: postgres_db
       restart: always
-      environment:
-        - POSTGRES_USER=${DB_USER}
-        - POSTGRES_PASSWORD=${DB_PASSWORD}
-        - POSTGRES_DB=${DB_NAME}
       # Ограничиваем аппетиты Postgres на уровне движка
       command: >
         postgres
         -c 'shared_buffers=128MB'
-        -c 'max_connections=50'
+        -c 'max_connections=5'
         -c 'work_mem=4MB'
         -c 'maintenance_work_mem=32MB'
       ports:
@@ -21,7 +17,7 @@ services:
       env_file:
         - .env
       healthcheck: # Проверка, что база реально готова
-        test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+        test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
         interval: 5s
         timeout: 5s
         retries: 5
@@ -41,8 +37,11 @@ services:
 
     app:
       image: ghcr.io/maximtretjakov/nofelet-web:latest
-      container_name: signaling_server
+      container_name: web_gateway
       restart: always
+      depends_on:
+        db:
+          condition: service_healthy
       ports:
           - "8080:8080" # Внешний порт : Порт внутри контейнера
       env_file:
