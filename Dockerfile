@@ -5,8 +5,8 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-# Собираем из папки cmd/signaling
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o nofelet-web ./cmd/
+# Собираем из папки cmd/
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o nofelet-web ./cmd/main.go
 
 # --- Этап запуска ---
 FROM alpine:latest
