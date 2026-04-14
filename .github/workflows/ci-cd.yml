@@ -94,9 +94,7 @@ jobs:
             docker compose pull
             
             # 3. ЗАПУСК МИГРАЦИЙ
-            export GOOSE_DRIVER=postgres
-            export GOOSE_DBSTRING="${{ secrets.DB_DSN }}" 
-            goose -dir ./migrations up
+            docker compose run --rm app make migrate-up
             
             # 4. Перезапуск контейнеров
             docker compose up -d
