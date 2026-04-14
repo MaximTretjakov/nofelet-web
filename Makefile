@@ -22,6 +22,10 @@ docs: openapi_merge openapi_http
 watch:
 	$(WATCHER)
 
+migrate-up:
+	@echo "Applying migrations..."
+	goose -dir ./migrations postgres "$$GOOSE_DBSTRING" up
+
 ## test: Launch unit tests
 .PHONY: test
 test:
