@@ -94,7 +94,7 @@ jobs:
             docker compose pull
             
             # 3. ЗАПУСК МИГРАЦИЙ
-            docker compose run --rm app make migrate-up
+            docker compose run --rm app goose -dir ./migrations up
             
             # 4. Перезапуск контейнеров
             docker compose up -d

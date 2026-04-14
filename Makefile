@@ -22,10 +22,6 @@ docs: openapi_merge openapi_http
 watch:
 	$(WATCHER)
 
-migrate-up:
-	@echo "Applying migrations..."
-	goose -dir ./migrations postgres "user=admin password=nofelet_admin host=db port=5432 dbname=nofelet_db sslmode=disable" up
-
 ## test: Launch unit tests
 .PHONY: test
 test:
