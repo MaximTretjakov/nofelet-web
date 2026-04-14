@@ -1,5 +1,7 @@
 # --- Этап сборки ---
 FROM golang:1.25-alpine AS builder
+# Устанавливаем make
+RUN apk add --no-cache make
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
