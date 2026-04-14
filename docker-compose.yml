@@ -17,7 +17,7 @@ services:
       healthcheck: # Проверка, что база реально готова
         test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
         interval: 5s
-        timeout: 5s
+        timeout: 10s
         retries: 5
       deploy:
         resources:
