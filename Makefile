@@ -3,8 +3,6 @@ OAPI_CODEGEN := $(GO_BIN)/oapi-codegen
 OAPI_MERGER := $(GO_BIN)/oapi-merger
 MERGED_OAPI_WEB_V1=$(PWD)/api/openapi/web/v1/merged.json
 
-DB_URL = "postgres://admin:nofelet_admin@db:5432/nofelet_db?sslmode=disable"
-
 ## build: Build an application
 .PHONY: build
 build: docs
@@ -26,7 +24,7 @@ watch:
 
 migrate-up:
 	@echo "Applying migrations..."
-	goose -dir ./migrations postgres $(DB_URL) up
+	goose -dir ./migrations postgres "user=admin password=nofelet_admin host=db port=5432 dbname=nofelet_db sslmode=disable" up
 
 ## test: Launch unit tests
 .PHONY: test
