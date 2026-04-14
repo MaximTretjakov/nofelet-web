@@ -12,8 +12,6 @@ services:
         -c 'max_connections=5'
         -c 'work_mem=4MB'
         -c 'maintenance_work_mem=32MB'
-      ports:
-        - "5432:5432" # Пробрасываем порт наружу
       env_file:
         - .env
       healthcheck: # Проверка, что база реально готова
