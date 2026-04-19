@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/MaximTretjakov/nofelet-web/internal/domain/web/usecase"
 	"github.com/MaximTretjakov/nofelet-web/internal/v1/view"
-	clientErrors "github.com/MaximTretjakov/nofelet-web/services/client/errors"
 )
 
 type Controller struct {
@@ -19,10 +19,11 @@ func New(uc UseCase) *Controller {
 }
 
 func (c *Controller) HandleError(err error) (int, view.SimpleErrorBody) {
-	var se clientErrors.ServiceError
-	if errors.As(err, &se) {
-		return se.StatusCode, newError(se)
+	switch {
+	case errors.Is(err, usecase.ErrEmptyCredentials):
+		return http.StatusBadRequest, newError(err)
 	}
+
 	return http.StatusInternalServerError, view.SimpleErrorBody{}
 }
 
