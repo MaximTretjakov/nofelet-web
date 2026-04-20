@@ -4,6 +4,7 @@ import (
 	"github.com/MaximTretjakov/nofelet-web/internal/dependency"
 	"github.com/MaximTretjakov/nofelet-web/internal/domain/web/controller"
 	"github.com/MaximTretjakov/nofelet-web/internal/domain/web/usecase"
+	"github.com/MaximTretjakov/nofelet-web/internal/storage/postgres"
 )
 
 func Register(deps *dependency.Container) {
@@ -16,5 +17,9 @@ func Register(deps *dependency.Container) {
 }
 
 func makeUC(deps *dependency.Container) *usecase.UseCase {
-	return usecase.New(deps.DB, deps.Logger)
+	return usecase.New(
+		deps.DB,
+		deps.Logger,
+		postgres.NewUser(deps.DB),
+	)
 }
