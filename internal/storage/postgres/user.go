@@ -3,7 +3,12 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"errors"
+)
+
+var (
+	ErrCheckLogin = errors.New("check login uniqueness error")
+	ErrCreateUser = errors.New("create user error")
 )
 
 type UserReg struct {
@@ -23,8 +28,23 @@ func (u *UserReg) IsLoginUnique(ctx context.Context, login string) (bool, error)
 
 	err := u.db.QueryRowContext(ctx, query, login).Scan(&exists)
 	if err != nil {
-		return false, fmt.Errorf("check login uniqueness error: %w", err)
+		return false, ErrCheckLogin
 	}
 
 	return !exists, nil
+}
+
+// CreateUser - создает пользователя
+func (u *UserReg) CreateUser(ctx context.Context, login, hashedPassword string) (int64, error) {
+	var id int64
+	query := `INSERT INTO users (login, password_hash, created_at) 
+              VALUES ($1, $2, NOW()) 
+              RETURNING id`
+
+	err := u.db.QueryRowContext(ctx, query, login, hashedPassword).Scan(&id)
+	if err != nil {
+		return 0, ErrCreateUser
+	}
+
+	return id, nil
 }

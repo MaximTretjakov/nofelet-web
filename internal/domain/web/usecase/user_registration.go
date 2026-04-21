@@ -30,7 +30,10 @@ func (uc *UseCase) UserRegistration(
 		return dto.UserRegistrationResponse{}, ErrUserExists
 	}
 
-	// todo CreateUser
+	_, err = uc.User.CreateUser(ctx, req.Login, req.Password)
+	if err != nil {
+		return dto.UserRegistrationResponse{}, err
+	}
 
 	return dto.UserRegistrationResponse{}, nil
 }
