@@ -31,7 +31,7 @@ func (u *UserReg) IsLoginUnique(ctx context.Context, login string) (bool, error)
 		return false, ErrCheckLogin
 	}
 
-	return !exists, nil
+	return exists, nil
 }
 
 // CreateUser - создает пользователя
