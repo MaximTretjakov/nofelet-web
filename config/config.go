@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Web          WEB    `env:",prefix=WEB_"`
-	Debug        bool   `env:"DEBUG"`
-	AppNamespace string `env:"APP_NAMESPACE"`
+	DB           Postgres `env:",prefix=POSTGRES_"`
+	Web          WEB      `env:",prefix=WEB_"`
+	Debug        bool     `env:"DEBUG"`
+	AppNamespace string   `env:"APP_NAMESPACE"`
 }
 
 type WEB struct {
@@ -22,6 +23,10 @@ type WEB struct {
 	WriteTimeout      time.Duration `env:"WRITE_TIMEOUT,default=30s"`
 	ReadHeaderTimeout time.Duration `env:"READ_HEADER_TIMEOUT,default=30s"`
 	ShutdownTimeout   time.Duration `env:"SHUTDOWN_TIMEOUT,default=3s"`
+}
+
+type Postgres struct {
+	ConnectionString string `env:"CONNECTION_STRING,required"`
 }
 
 func init() {

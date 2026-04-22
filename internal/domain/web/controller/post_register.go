@@ -11,7 +11,7 @@ import (
 // PostRegister - регистрация нового пользователя
 func (c *Controller) PostRegister(ctx *gin.Context) {
 	var req view.PostRegistrationRequestData
-	if err := ctx.BindUri(&req); err != nil {
+	if err := ctx.ShouldBind(&req); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, err)
 		return
 	}
