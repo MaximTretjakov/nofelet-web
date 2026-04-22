@@ -12,6 +12,7 @@ import (
 	"github.com/MaximTretjakov/nofelet-web/config"
 	"github.com/MaximTretjakov/nofelet-web/internal/app/web"
 	"github.com/MaximTretjakov/nofelet-web/internal/dependency"
+	"github.com/MaximTretjakov/nofelet-web/internal/storage/postgres"
 	"github.com/MaximTretjakov/nofelet-web/pkg/httpserver"
 )
 
@@ -30,7 +31,18 @@ func main() {
 		gin.SetMode(gin.DebugMode)
 	}
 
-	deps, depErr := dependency.New(&cfg, logger)
+	db, dbErr := postgres.New(cfg.DB.ConnectionString)
+	if dbErr != nil {
+		log.Fatal(dbErr)
+	}
+
+	defer func() {
+		if dbErr = db.Close(); dbErr != nil {
+			logger.Error("error:", slog.Any("db init error:", dbErr))
+		}
+	}()
+
+	deps, depErr := dependency.New(&cfg, logger, db)
 	if depErr != nil {
 		log.Fatal(depErr)
 	}
