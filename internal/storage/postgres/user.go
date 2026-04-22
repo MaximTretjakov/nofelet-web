@@ -6,10 +6,7 @@ import (
 	"errors"
 )
 
-var (
-	ErrCheckLogin = errors.New("check login uniqueness error")
-	ErrCreateUser = errors.New("create user error")
-)
+var ErrCreateUser = errors.New("create user error")
 
 type UserReg struct {
 	db *sql.DB
@@ -28,7 +25,7 @@ func (u *UserReg) IsLoginUnique(ctx context.Context, login string) (bool, error)
 
 	err := u.db.QueryRowContext(ctx, query, login).Scan(&exists)
 	if err != nil {
-		return false, ErrCheckLogin
+		return false, err
 	}
 
 	return exists, nil
