@@ -22,6 +22,8 @@ func (c *Controller) HandleError(err error) (int, view.SimpleErrorBody) {
 	switch {
 	case errors.Is(err, usecase.ErrEmptyCredentials):
 		return http.StatusBadRequest, newError(err)
+	case errors.Is(err, usecase.ErrUserExists):
+		return http.StatusBadRequest, newError(err)
 	}
 
 	return http.StatusInternalServerError, newError(err)
