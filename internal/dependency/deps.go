@@ -7,7 +7,6 @@ import (
 
 	"github.com/MaximTretjakov/nofelet-web/config"
 	"github.com/MaximTretjakov/nofelet-web/internal/dependency/web"
-	"github.com/MaximTretjakov/nofelet-web/internal/storage/postgres"
 )
 
 // Container основной контейнер зависимостей
@@ -18,22 +17,11 @@ type Container struct {
 	DB     *sql.DB
 }
 
-func New(Cfg *config.Config, logger *slog.Logger) (*Container, error) {
+func New(Cfg *config.Config, logger *slog.Logger, db *sql.DB) (*Container, error) {
 	WebContainer, err := web.New(Cfg, logger)
 	if err != nil {
 		return nil, fmt.Errorf("создание сигналинг контейнера: %w", err)
 	}
-
-	db, dbErr := postgres.New(Cfg.DB.ConnectionString)
-	if dbErr != nil {
-		return nil, dbErr
-	}
-
-	defer func() {
-		if dbErr = db.Close(); err != nil {
-			logger.Error("dependency:", slog.Any("db init error:", dbErr))
-		}
-	}()
 
 	return &Container{
 		Web:    WebContainer,
