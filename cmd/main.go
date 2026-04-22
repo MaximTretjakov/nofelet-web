@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/MaximTretjakov/nofelet-web/config"
 	"github.com/MaximTretjakov/nofelet-web/internal/app/web"
 	"github.com/MaximTretjakov/nofelet-web/internal/dependency"
@@ -21,6 +23,12 @@ func main() {
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
+
+	gin.SetMode(gin.ReleaseMode)
+	if cfg.Debug {
+		logger.Info("gin debug mode enabled")
+		gin.SetMode(gin.DebugMode)
+	}
 
 	deps, depErr := dependency.New(&cfg, logger)
 	if depErr != nil {
