@@ -24,7 +24,7 @@ func (c *Controller) HandleError(err error) (int, view.SimpleErrorBody) {
 		return http.StatusBadRequest, newError(err)
 	}
 
-	return http.StatusInternalServerError, view.SimpleErrorBody{}
+	return http.StatusInternalServerError, newError(err)
 }
 
 func newError(err error) view.SimpleErrorBody {
