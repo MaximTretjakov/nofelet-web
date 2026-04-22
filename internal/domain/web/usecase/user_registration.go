@@ -26,7 +26,7 @@ func (uc *UseCase) UserRegistration(
 	if err != nil {
 		return dto.UserRegistrationResponse{}, err
 	}
-	if !exist {
+	if exist {
 		return dto.UserRegistrationResponse{}, ErrUserExists
 	}
 
