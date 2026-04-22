@@ -3,10 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"errors"
 )
-
-var ErrCreateUser = errors.New("create user error")
 
 type UserReg struct {
 	db *sql.DB
@@ -40,7 +37,7 @@ func (u *UserReg) CreateUser(ctx context.Context, login, hashedPassword string) 
 
 	err := u.db.QueryRowContext(ctx, query, login, hashedPassword).Scan(&id)
 	if err != nil {
-		return 0, ErrCreateUser
+		return 0, err
 	}
 
 	return id, nil
