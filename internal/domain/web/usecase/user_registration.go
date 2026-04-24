@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/MaximTretjakov/nofelet-web/internal/domain/web/dto"
 	"github.com/MaximTretjakov/nofelet-web/internal/v1/view"
 )
@@ -11,6 +13,7 @@ import (
 var (
 	ErrUserExists       = errors.New("user already exists")
 	ErrEmptyCredentials = errors.New("empty credentials")
+	ErrHashingFailed    = errors.New("failed to hash password")
 )
 
 // UserRegistration - Регистрация нового пользователя
@@ -22,15 +25,21 @@ func (uc *UseCase) UserRegistration(
 		return dto.UserRegistrationResponse{}, ErrEmptyCredentials
 	}
 
-	exist, err := uc.User.IsLoginUnique(ctx, req.Login)
-	if err != nil {
-		return dto.UserRegistrationResponse{}, err
-	}
-	if exist {
-		return dto.UserRegistrationResponse{}, ErrUserExists
-	}
+	// exist, err := uc.User.IsLoginUnique(ctx, req.Login)
+	// if err != nil {
+	// 	return dto.UserRegistrationResponse{}, err
+	// }
+	// if exist {
+	// 	return dto.UserRegistrationResponse{}, ErrUserExists
+	// }
 
-	_, err = uc.User.CreateUser(ctx, req.Login, req.Password)
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return dto.UserRegistrationResponse{}, ErrHashingFailed
+	}
+	hashedPassword := string(hash)
+
+	_, err = uc.User.CreateUser(ctx, req.Login, hashedPassword)
 	if err != nil {
 		return dto.UserRegistrationResponse{}, err
 	}
