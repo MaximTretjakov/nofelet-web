@@ -25,13 +25,13 @@ func (uc *UseCase) UserRegistration(
 		return dto.UserRegistrationResponse{}, ErrEmptyCredentials
 	}
 
-	// exist, err := uc.User.IsLoginUnique(ctx, req.Login)
-	// if err != nil {
-	// 	return dto.UserRegistrationResponse{}, err
-	// }
-	// if exist {
-	// 	return dto.UserRegistrationResponse{}, ErrUserExists
-	// }
+	exist, err := uc.User.IsLoginUnique(ctx, req.Login)
+	if err != nil {
+		return dto.UserRegistrationResponse{}, err
+	}
+	if exist {
+		return dto.UserRegistrationResponse{}, ErrUserExists
+	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
