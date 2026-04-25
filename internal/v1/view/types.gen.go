@@ -7,8 +7,23 @@ const (
 	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
+// OK
+type AuthResult struct {
+	Data AuthResultData `json:"data"`
+}
+
+// AuthResultData defines model for AuthResultData.
+type AuthResultData struct {
+	Token string `json:"token"`
+}
+
 // AuthToken defines model for AuthToken.
-type AuthToken = map[string]interface{}
+type AuthToken struct {
+	AccessToken     string  `json:"accessToken"`
+	ExpAccessToken  float32 `json:"expAccessToken"`
+	ExpRefreshToken float32 `json:"expRefreshToken"`
+	RefreshToken    string  `json:"refreshToken"`
+}
 
 // Простая ошибка
 type ErrorResponseWithMessage struct {
@@ -17,11 +32,6 @@ type ErrorResponseWithMessage struct {
 
 	// ID запроса
 	RequestId *string `json:"requestId,omitempty"`
-}
-
-// Login defines model for Login.
-type Login struct {
-	Token AuthToken `json:"token"`
 }
 
 // OK
@@ -58,8 +68,8 @@ type RefreshToken = string
 // Простая ошибка
 type BadRequest = ErrorResponseWithMessage
 
-// PostAuthResponse defines model for PostAuthResponse.
-type PostAuthResponse = Login
+// OK
+type PostAuthResponse = AuthResult
 
 // OK
 type PostRegistrationResponse = RegistrationResult
@@ -85,6 +95,9 @@ type PostRegistrationRequestData = RequestBody
 type PutLogoutParams struct {
 	RefreshToken RefreshToken `form:"refreshToken" json:"refreshToken"`
 }
+
+// PostAuthJSONRequestBody defines body for PostAuth for application/json ContentType.
+type PostAuthJSONRequestBody = PostRegistrationRequestData
 
 // RegistrationRequestDataJSONRequestBody defines body for RegistrationRequestData for application/json ContentType.
 type RegistrationRequestDataJSONRequestBody = PostRegistrationRequestData

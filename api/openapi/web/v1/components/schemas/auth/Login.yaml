@@ -1,5 +1,14 @@
-Login:
-  required: [ token ]
+AuthResult:
+  description: OK
+  required: [data]
+  properties:
+    data:
+      $ref: '#/AuthResultData'
+
+AuthResultData:
+  type: object
+  required: [token]
   properties:
     token:
-      $ref: './AuthToken.yaml#/AuthToken'
+      type: string
+      example: jwttokenexample123Fkjbckdkjk!

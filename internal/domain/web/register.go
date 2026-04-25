@@ -19,6 +19,7 @@ func Register(deps *dependency.Container) {
 func makeUC(deps *dependency.Container) *usecase.UseCase {
 	return usecase.New(
 		deps.DB,
+		deps.Cfg,
 		deps.Logger,
 		postgres.NewUser(deps.DB),
 	)

@@ -8,6 +8,10 @@ paths:
       summary: Авторизация пользователя
       description: Авторизация
       operationId: PostAuth
+      requestBody:
+        $ref: "../requests/registration/PostRegistrationRequestData.yaml#/PostRegistrationRequestData"
       responses:
         "201":
-          $ref: "../responses/auth/PostAuth.yaml#/PostAuthResponse"
+          $ref: "../responses/auth/PostAuthResponse.yaml#/PostAuthResponse"
+        '400':
+          $ref: "../responses/errors/SimpleErrorResponse.yaml#/SimpleErrorResponse"

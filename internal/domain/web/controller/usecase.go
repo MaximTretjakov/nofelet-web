@@ -10,4 +10,6 @@ import (
 type UseCase interface {
 	// UserRegistration - Регистрация нового пользователя
 	UserRegistration(ctx context.Context, req view.PostRegistrationRequestData) (dto.UserRegistrationResponse, error)
+	// CreateToken - Создание токена доступа
+	CreateToken(ctx context.Context, req view.PostRegistrationRequestData) (string, error)
 }
