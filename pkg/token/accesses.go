@@ -1,7 +1,6 @@
 package token
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -22,13 +21,7 @@ func NewJWTToken(config *config.Config) *JWTToken {
 }
 
 // CreateToken - Создание анонимного токена
-func (t *JWTToken) CreateToken(ctx context.Context, login string) (string, error) {
-	token, err := t.create(ctx, login)
-	return token, err
-}
-
-// create - Создание анонимного токена
-func (t *JWTToken) create(ctx context.Context, login string) (string, error) {
+func (t *JWTToken) CreateToken(login string) (string, error) {
 	claims := jwt.MapClaims{
 		"sub": login,
 		"iat": time.Now().Unix(),

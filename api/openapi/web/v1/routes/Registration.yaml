@@ -15,15 +15,3 @@ paths:
           $ref: "../responses/auth/PostRegistrationResponse.yaml#/PostRegistrationResponse"
         '400':
           $ref: "../responses/errors/SimpleErrorResponse.yaml#/SimpleErrorResponse"
-
-parameters:
-  UserCredentials:
-    name: landingID
-    in: path
-    description: Идентификатор лендинга
-    required: true
-    schema:
-      type: integer
-      example: 5
-    x-oapi-codegen-extra-tags:
-      binding: required

@@ -16,13 +16,15 @@ func (c *Controller) PostAuth(ctx *gin.Context) {
 		return
 	}
 
-	data, err := c.uc.CreateToken(ctx, req)
+	token, err := c.uc.CreateToken(ctx, req)
 	if err != nil {
 		ctx.AbortWithStatusJSON(c.HandleError(err))
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, view.Token{
-		Data: view.TokenData{},
+	ctx.JSON(http.StatusCreated, view.AuthResult{
+		Data: view.AuthResultData{
+			Token: token,
+		},
 	})
 }
