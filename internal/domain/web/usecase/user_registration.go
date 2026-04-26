@@ -21,7 +21,7 @@ func (uc *UseCase) UserRegistration(
 	ctx context.Context,
 	req view.PostRegistrationRequestData,
 ) (dto.UserRegistrationResponse, error) {
-	if len(req.Login) == 0 && len(req.Password) == 0 {
+	if len(req.Login) == 0 && len(req.Password) == 0 && len(req.Name) == 0 {
 		return dto.UserRegistrationResponse{}, ErrEmptyCredentials
 	}
 
@@ -39,7 +39,7 @@ func (uc *UseCase) UserRegistration(
 	}
 	hashedPassword := string(hash)
 
-	_, err = uc.User.CreateUser(ctx, req.Login, hashedPassword)
+	_, err = uc.User.CreateUser(ctx, req.Login, hashedPassword, req.Name)
 	if err != nil {
 		return dto.UserRegistrationResponse{}, err
 	}

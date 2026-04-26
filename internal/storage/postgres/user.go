@@ -31,13 +31,13 @@ func (u *UserReg) IsLoginUnique(ctx context.Context, login string) (bool, error)
 }
 
 // CreateUser - создает пользователя
-func (u *UserReg) CreateUser(ctx context.Context, login, hashedPassword string) (int64, error) {
+func (u *UserReg) CreateUser(ctx context.Context, login, hashedPassword, name string) (int64, error) {
 	var id int64
-	query := `INSERT INTO users (login, password, created_at) 
-              VALUES ($1, $2, NOW()) 
+	query := `INSERT INTO users (login, password, name, created_at) 
+              VALUES ($1, $2, $3, NOW()) 
               RETURNING id`
 
-	err := u.db.QueryRowContext(ctx, query, login, hashedPassword).Scan(&id)
+	err := u.db.QueryRowContext(ctx, query, login, hashedPassword, name).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
