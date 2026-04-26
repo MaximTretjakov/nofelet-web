@@ -33,7 +33,7 @@ func (u *UserReg) IsLoginUnique(ctx context.Context, login string) (bool, error)
 // CreateUser - создает пользователя
 func (u *UserReg) CreateUser(ctx context.Context, login, hashedPassword, name string) (int64, error) {
 	var id int64
-	query := `INSERT INTO users (login, password, name, created_at) 
+	query := `INSERT INTO users (login, password, user_name, created_at) 
               VALUES ($1, $2, $3, NOW()) 
               RETURNING id`
 
