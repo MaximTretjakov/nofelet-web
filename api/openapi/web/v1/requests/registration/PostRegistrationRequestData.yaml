@@ -7,12 +7,16 @@ PostRegistrationRequestData:
 
 RequestBody:
   description: Тело запроса
-  required: [ login, password ]
+  required: [ login, name, password ]
   properties:
     login:
       type: string
       description: Логин пользователя
       example: test@gmail.com
+    name:
+      type: string
+      description: Имя пользователя
+      example: Иванов Иван Иванович
     password:
       type: string
       description: Пароль пользователя

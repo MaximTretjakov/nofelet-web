@@ -49,6 +49,9 @@ type RequestBody struct {
 	// Логин пользователя
 	Login string `json:"login"`
 
+	// Имя пользователя
+	Name string `json:"name"`
+
 	// Пароль пользователя
 	Password string `json:"password"`
 }
