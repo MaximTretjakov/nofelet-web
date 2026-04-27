@@ -13,7 +13,7 @@ func Register(deps *dependency.Container) {
 	r := deps.Web.Routes.Group("/nofelet-web/api/v1")
 	r.POST("/registration", c.PostRegister)
 	r.POST("/auth", c.PostAuth)
-	r.PUT("/logout", c.PostLogout)
+	r.POST("/logout", c.PostLogout)
 }
 
 func makeUC(deps *dependency.Container) *usecase.UseCase {
