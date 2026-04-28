@@ -50,7 +50,7 @@ func (u *UserReg) GetUserCredentials(ctx context.Context, login string) (dto.Use
 	var user dto.UserCredentials
 	query := `SELECT login, password, user_name FROM users WHERE login = $1`
 
-	err := u.db.QueryRowContext(ctx, query, login).Scan(&user.Login, &user.Password)
+	err := u.db.QueryRowContext(ctx, query, login).Scan(&user.Login, &user.Password, &user.UserName)
 	if err != nil {
 		return dto.UserCredentials{}, err
 	}
