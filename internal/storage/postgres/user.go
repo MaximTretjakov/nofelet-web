@@ -48,7 +48,7 @@ func (u *UserReg) CreateUser(ctx context.Context, login, hashedPassword, name st
 // GetUserCredentials - извлекает креды пользователя
 func (u *UserReg) GetUserCredentials(ctx context.Context, login string) (dto.UserCredentials, error) {
 	var user dto.UserCredentials
-	query := `SELECT login, password FROM users WHERE login = $1`
+	query := `SELECT login, password, user_name FROM users WHERE login = $1`
 
 	err := u.db.QueryRowContext(ctx, query, login).Scan(&user.Login, &user.Password)
 	if err != nil {

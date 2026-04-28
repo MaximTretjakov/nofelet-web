@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/MaximTretjakov/nofelet-web/config"
+	"github.com/MaximTretjakov/nofelet-web/internal/domain/web/dto"
 )
 
 type JWTToken struct {
@@ -21,11 +22,12 @@ func NewJWTToken(config *config.Config) *JWTToken {
 }
 
 // CreateToken - Создание анонимного токена
-func (t *JWTToken) CreateToken(login string) (string, error) {
+func (t *JWTToken) CreateToken(cred dto.UserCredentials) (string, error) {
 	claims := jwt.MapClaims{
-		"sub": login,
-		"iat": time.Now().Unix(),
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"sub":      cred.Login,
+		"userName": cred.UserName,
+		"iat":      time.Now().Unix(),
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	}
 
 	jwtWithClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

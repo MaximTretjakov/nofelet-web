@@ -33,7 +33,7 @@ func (uc *UseCase) CreateToken(
 	}
 
 	model := token.NewJWTToken(uc.Cfg)
-	accessesToken, tErr := model.CreateToken(req.Login)
+	accessesToken, tErr := model.CreateToken(cred)
 	if tErr != nil {
 		uc.Log.Error("createToken:", slog.Any("ошибка генерации токена:", tErr))
 		return "", ErrInvalidCredentials

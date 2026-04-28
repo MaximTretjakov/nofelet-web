@@ -13,4 +13,5 @@ type Token struct {
 type UserCredentials struct {
 	Login    string
 	Password string
+	UserName string
 }
