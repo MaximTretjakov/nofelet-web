@@ -1,0 +1,73 @@
+version: "2"
+
+run:
+  tests: false
+
+issues:
+  max-same-issues: 0
+
+linters:
+  enable:
+    - asciicheck
+    - dupl
+    - forbidigo
+    - goconst
+    - gocritic
+    - goprintffuncname
+    - gosec
+    - gocognit
+    - makezero
+    - misspell
+    - revive
+    - whitespace
+    - unused
+
+  settings:
+    godot:
+      exclude:
+        - "@.+"
+
+    revive:
+      rules:
+        - name: var-naming
+          arguments:
+            - ["ID", "URL"]
+
+        - name: early-return
+          severity: warning
+
+        - name: argument-limit
+          arguments: [4]
+          disabled: true
+
+        - name: context-as-argument
+          arguments:
+            - allowTypesBefore: "*testing.T"
+
+        - name: context-keys-type
+
+        - name: datarace
+
+        - name: defer
+          arguments:
+            - ["call-chain", "loop", "return"]
+
+        - name: error-naming
+        - name: error-strings
+        - name: errorf
+        - name: if-return
+
+        - name: line-length-limit
+          arguments: [120]
+          disabled: true
+
+        - name: nested-structs
+          disabled: true
+
+        - name: unreachable-code
+        - name: useless-break
+        - name: unused-parameter
+        - name: unexported-naming
+
+    dupl:
+      threshold: 450
