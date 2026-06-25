@@ -64,7 +64,7 @@ jobs:
 
   Build-and-push:
     runs-on: ubuntu-latest
-    needs: Test # Ждем завершения тестов
+    needs: [Test, Lint]
     permissions:
       contents: read
       packages: write
