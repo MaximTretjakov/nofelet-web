@@ -12,14 +12,14 @@ type Config struct {
 	DB           Postgres `env:",prefix=POSTGRES_"`
 	Web          WEB      `env:",prefix=WEB_"`
 	JWT          JWT      `env:",prefix=JWT_"`
-	Debug        bool     `env:"DEBUG"`
+	Debug        bool     `env:"WEB_DEBUG"`
 	AppNamespace string   `env:"APP_NAMESPACE"`
+	Crt          string   `env:"SERVER_CRT,required"` // Сертификат
+	Key          string   `env:"SERVER_KEY,required"` // Сертификат
 }
 
 type WEB struct {
 	Port              string        `env:"PORT,required"`
-	ServerCrt         string        `env:"SERVER_CRT,required"`
-	ServerKey         string        `env:"SERVER_KEY,required"`
 	ReadTimeout       time.Duration `env:"READ_TIMEOUT,default=30s"`
 	WriteTimeout      time.Duration `env:"WRITE_TIMEOUT,default=30s"`
 	ReadHeaderTimeout time.Duration `env:"READ_HEADER_TIMEOUT,default=30s"`
