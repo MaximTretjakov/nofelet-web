@@ -86,18 +86,13 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             cd ${{ env.APP_INFRA }}
-            
-#           # 1. Авторизация
-#           echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
-            
+            # 1. Авторизация
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
             # 2. Обновление образа
             docker compose pull nofelet-web
-            
             # 3. ЗАПУСК МИГРАЦИЙ
             docker compose run --rm postgres goose -dir ./migrations up
-            
             # 4. Перезапуск контейнеров
             docker compose up -d nofelet-web
-            
             # 5. Очистка
             docker image prune -f
