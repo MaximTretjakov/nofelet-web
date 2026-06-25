@@ -56,8 +56,8 @@ func main() {
 
 	httpServer := httpserver.New(deps.Web.Routes,
 		httpserver.WithAddress(cfg.Web.Port),
-		httpserver.WithServerCRT(cfg.Web.ServerCrt),
-		httpserver.WithServerKey(cfg.Web.ServerKey),
+		httpserver.WithServerCRT(cfg.Crt),
+		httpserver.WithServerKey(cfg.Key),
 		httpserver.WithReadTimeout(cfg.Web.ReadTimeout),
 		httpserver.WithReadHeaderTimeout(cfg.Web.ReadHeaderTimeout),
 		httpserver.WithWriteTimeout(cfg.Web.WriteTimeout),

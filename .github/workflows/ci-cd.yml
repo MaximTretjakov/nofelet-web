@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  APP_PATH: ${{ vars.APP_PATH }}
+  APP_INFRA: ${{ vars.INFRA }}
 
 jobs:
   # 1. Джоба-заглушка для тестов
@@ -73,9 +73,9 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
-          # Копируем конфиг докера и папку с sql-миграциями
-          source: "docker-compose.yml,migrations/"
-          target: "${{ env.APP_PATH }}"
+          # Копируем папку с sql-миграциями
+          source: "migrations/"
+          target: "${{ env.APP_INFRA }}"
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -85,19 +85,19 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           script: |
-            cd ${{ env.APP_PATH }}
+            cd ${{ env.APP_INFRA }}
             
-            # 1. Авторизация
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+#            # 1. Авторизация
+#            echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
             
             # 2. Обновление образа
-            docker compose pull
+            docker compose pull nofelet-web
             
             # 3. ЗАПУСК МИГРАЦИЙ
-            docker compose run --rm app goose -dir ./migrations up
+            docker compose run --rm postgres goose -dir ./migrations up
             
             # 4. Перезапуск контейнеров
-            docker compose up -d
+            docker compose up -d nofelet-web
             
             # 5. Очистка
             docker image prune -f
