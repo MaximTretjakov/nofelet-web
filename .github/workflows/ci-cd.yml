@@ -24,6 +24,44 @@ jobs:
           echo "Tests passed (stub)"
         continue-on-error: true # Позволяет пайплайну идти дальше, даже если тесты упадут
 
+  Lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    needs: Test
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Verify dependencies
+        run: |
+          go mod download
+          go mod tidy
+          go build ./...
+
+      - name: Debug envconfig
+        run: |
+          go list -m github.com/sethvargo/go-envconfig
+          go doc github.com/sethvargo/go-envconfig || true
+
+      - name: Debug golangci config
+        run: |
+          pwd
+          ls -la
+          echo "===== .golangci.yml ====="
+          cat .golangci.yml
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.12.2
+          args: --config=.golangci.yml ./...
+
   Build-and-push:
     runs-on: ubuntu-latest
     needs: Test # Ждем завершения тестов
