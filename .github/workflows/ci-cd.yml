@@ -115,8 +115,10 @@ jobs:
             # 2. Обновление образа
             docker compose pull nofelet-web
             # 3. ЗАПУСК МИГРАЦИЙ
-            docker compose run --rm postgres goose -dir ./migrations up
+            docker compose run --rm nofelet-web goose -dir ./migrations up
             # 4. Перезапуск контейнеров
             docker compose up -d nofelet-web
+            # Чекаем статус миграций
+            docker compose run --rm nofelet-web goose -dir ./migrations status
             # 5. Очистка
             docker image prune -f
