@@ -22,7 +22,7 @@ func (c *Controller) PostAuth(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, view.AuthResult{
+	ctx.JSON(http.StatusOK, view.AuthResult{
 		Data: view.AuthResultData{
 			Token: token,
 		},
