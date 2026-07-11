@@ -31,6 +31,10 @@ func New(cfg *config.Config, logger *slog.Logger) (*Container, error) {
 }
 
 func newRoutes(logger *slog.Logger) (*gin.Engine, error) {
+	if err := metrics.Init(); err != nil {
+		return nil, err
+	}
+
 	router := gin.New()
 	router.ContextWithFallback = true
 	router.HandleMethodNotAllowed = true
