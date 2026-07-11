@@ -8,6 +8,7 @@ import (
 
 	"github.com/MaximTretjakov/nofelet-web/config"
 	"github.com/MaximTretjakov/nofelet-web/middleware"
+	"github.com/MaximTretjakov/nofelet-web/middleware/metrics"
 )
 
 type Container struct {
@@ -36,6 +37,7 @@ func newRoutes(logger *slog.Logger) (*gin.Engine, error) {
 	router.Use(
 		gin.Recovery(),
 		middleware.CorsMiddleware(),
+		metrics.Metrics(),
 		middleware.NewGinLogger(logger).Middleware,
 	)
 	return router, nil
