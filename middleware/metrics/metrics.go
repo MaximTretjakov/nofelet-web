@@ -18,7 +18,7 @@ var (
 	activeRequests  metric.Int64UpDownCounter
 )
 
-func init() {
+func Init() {
 	var err error
 
 	// Создаем Meter (пространство имен для метрик вашего приложения)
