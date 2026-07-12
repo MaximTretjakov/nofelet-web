@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/otel"
 	otelprom "go.opentelemetry.io/otel/exporters/prometheus"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/MaximTretjakov/nofelet-web/internal/app/web"
 	"github.com/MaximTretjakov/nofelet-web/internal/dependency"
 	"github.com/MaximTretjakov/nofelet-web/internal/storage/postgres"
+	"github.com/MaximTretjakov/nofelet-web/middleware/metrics"
 	"github.com/MaximTretjakov/nofelet-web/pkg/httpserver"
 )
 
@@ -44,6 +46,8 @@ func main() {
 	}
 
 	provider := sdkmetric.NewMeterProvider(sdkmetric.WithReader(exporter))
+	otel.SetMeterProvider(provider)
+	metrics.Init()
 	defer func() { _ = provider.Shutdown(context.Background()) }()
 
 	// Создаем коннекшен к бд
