@@ -8,6 +8,7 @@ import (
 
 	"github.com/MaximTretjakov/nofelet-web/config"
 	"github.com/MaximTretjakov/nofelet-web/middleware"
+	"github.com/MaximTretjakov/nofelet-web/middleware/metrics"
 )
 
 type Container struct {
@@ -30,12 +31,17 @@ func New(cfg *config.Config, logger *slog.Logger) (*Container, error) {
 }
 
 func newRoutes(logger *slog.Logger) (*gin.Engine, error) {
+	if err := metrics.Init(); err != nil {
+		return nil, err
+	}
+
 	router := gin.New()
 	router.ContextWithFallback = true
 	router.HandleMethodNotAllowed = true
 	router.Use(
 		gin.Recovery(),
 		middleware.CorsMiddleware(),
+		metrics.Metrics(),
 		middleware.NewGinLogger(logger).Middleware,
 	)
 	return router, nil
