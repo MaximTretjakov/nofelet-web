@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/MaximTretjakov/nofelet-web/internal/dependency"
+	"github.com/MaximTretjakov/nofelet-web/internal/domain/metrics"
 	"github.com/MaximTretjakov/nofelet-web/internal/domain/web"
 	"github.com/MaximTretjakov/nofelet-web/internal/swagger"
 	"github.com/MaximTretjakov/nofelet-web/internal/v1"
@@ -13,6 +14,7 @@ func New(deps *dependency.Container) error {
 	}
 
 	web.Register(deps)
+	metrics.Register(deps)
 
 	return nil
 }
