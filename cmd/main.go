@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"log/slog"
 	"os"
@@ -8,6 +9,8 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	otelprom "go.opentelemetry.io/otel/exporters/prometheus"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 
 	"github.com/MaximTretjakov/nofelet-web/config"
 	"github.com/MaximTretjakov/nofelet-web/internal/app/web"
@@ -17,40 +20,55 @@ import (
 )
 
 func main() {
+	// Создаем конфиг
 	if err := config.New(); err != nil {
 		panic(err)
 	}
 	cfg := config.Current()
 
+	// Создаем логгер
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
 
+	// Задаем режим
 	gin.SetMode(gin.ReleaseMode)
 	if cfg.Debug {
 		logger.Info("gin debug mode enabled")
 		gin.SetMode(gin.DebugMode)
 	}
 
+	// Создаем современный экспортер v0.66.0
+	exporter, err := otelprom.New()
+	if err != nil {
+		log.Fatalf("failed to create exporter: %v", err)
+	}
+
+	provider := sdkmetric.NewMeterProvider(sdkmetric.WithReader(exporter))
+	defer func() { _ = provider.Shutdown(context.Background()) }()
+
+	// Создаем коннекшен к бд
 	db, dbErr := postgres.New(cfg.DB.ConnectionString)
 	if dbErr != nil {
 		log.Fatal(dbErr)
 	}
-
 	defer func() {
 		if dbErr = db.Close(); dbErr != nil {
 			logger.Error("error:", slog.Any("db init error:", dbErr))
 		}
 	}()
 
+	// Создаем DI
 	deps, depErr := dependency.New(&cfg, logger, db)
 	if depErr != nil {
 		log.Fatal(depErr)
 	}
 
+	// Создаем контейнер приложения
 	if sigErr := web.New(deps); sigErr != nil {
 		log.Fatal(sigErr)
 	}
 
+	// Создаем и запускаем сервер
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
@@ -64,6 +82,7 @@ func main() {
 		httpserver.WithShutdownTimeout(cfg.Web.ShutdownTimeout),
 	)
 
+	// Graceful shutdown
 	select {
 	case s := <-interrupt:
 		logger.Error("error", slog.String("signal", s.String()))

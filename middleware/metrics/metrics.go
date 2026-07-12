@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"github.com/bytedance/gopkg/util/logger"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/metric"
 )
@@ -17,9 +18,10 @@ var (
 	activeRequests  metric.Int64UpDownCounter
 )
 
-func Init() error {
+func init() {
 	var err error
 
+	// Создаем Meter (пространство имен для метрик вашего приложения)
 	meter := otel.Meter(serviceLabel)
 
 	// Счетчик всех HTTP-запросов
@@ -29,7 +31,7 @@ func Init() error {
 		metric.WithUnit("{request}"),
 	)
 	if err != nil {
-		return err
+		logger.Warn("сбой инициализации метрики requestsTotal", err)
 	}
 
 	// Счетчик всех HTTP-ответов
@@ -39,7 +41,7 @@ func Init() error {
 		metric.WithUnit("{response}"),
 	)
 	if err != nil {
-		return err
+		logger.Warn("сбой инициализации метрики responseTotal", err)
 	}
 
 	// Счетчик ошибок
@@ -49,7 +51,7 @@ func Init() error {
 		metric.WithUnit("{error}"),
 	)
 	if err != nil {
-		return err
+		logger.Warn("сбой инициализации метрики errorsTotal", err)
 	}
 
 	// Счетчик паник
@@ -59,7 +61,7 @@ func Init() error {
 		metric.WithUnit("{panic}"),
 	)
 	if err != nil {
-		return err
+		logger.Warn("сбой инициализации метрики panicsTotal", err)
 	}
 
 	// Гистограмма времени выполнения запроса
@@ -69,7 +71,7 @@ func Init() error {
 		metric.WithUnit("ms"),
 	)
 	if err != nil {
-		return err
+		logger.Warn("сбой инициализации метрики requestDuration", err)
 	}
 
 	// Размер ответа
@@ -79,7 +81,7 @@ func Init() error {
 		metric.WithUnit("By"),
 	)
 	if err != nil {
-		return err
+		logger.Warn("сбой инициализации метрики responseSize", err)
 	}
 
 	// Активные запросы
@@ -89,8 +91,6 @@ func Init() error {
 		metric.WithUnit("{request}"),
 	)
 	if err != nil {
-		return err
+		logger.Warn("сбой инициализации метрики activeRequests", err)
 	}
-
-	return nil
 }
