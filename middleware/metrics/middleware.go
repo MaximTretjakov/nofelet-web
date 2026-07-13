@@ -24,9 +24,6 @@ func Metrics() gin.HandlerFunc {
 		// Гистограмма времени выполнения запроса
 		requestDuration.Record(c.Request.Context(), time.Since(start).Seconds())
 
-		// Счетчик паник
-		panicsTotal.Add(c.Request.Context(), 1)
-
 		// Счетчик status code
 		responseTotal.Add(
 			c,
