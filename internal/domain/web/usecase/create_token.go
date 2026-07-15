@@ -3,15 +3,19 @@ package usecase
 import (
 	"context"
 	"errors"
-	"log/slog"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/MaximTretjakov/nofelet-web/internal/v1/view"
+	"github.com/MaximTretjakov/nofelet-web/middleware/metrics"
 	"github.com/MaximTretjakov/nofelet-web/pkg/token"
 )
 
-var ErrInvalidCredentials = errors.New("invalid login or password")
+var (
+	ErrInvalidCredentials = errors.New("auth invalid login or password")
+	ErrTokenGeneration    = errors.New("auth jwt token generation error")
+)
 
 // CreateToken - Создание токена доступа
 func (uc *UseCase) CreateToken(
@@ -19,7 +23,7 @@ func (uc *UseCase) CreateToken(
 	req view.PostRegistrationRequestData,
 ) (string, error) {
 	if len(req.Login) == 0 && len(req.Password) == 0 {
-		return "", ErrEmptyCredentials
+		return "", fmt.Errorf("auth %w", ErrEmptyCredentials)
 	}
 
 	cred, cErr := uc.User.GetUserCredentials(ctx, req.Login)
@@ -35,9 +39,10 @@ func (uc *UseCase) CreateToken(
 	model := token.NewJWTToken(uc.Cfg)
 	accessesToken, tErr := model.CreateToken(cred)
 	if tErr != nil {
-		uc.Log.Error("createToken:", slog.Any("ошибка генерации токена:", tErr))
-		return "", ErrInvalidCredentials
+		return "", ErrTokenGeneration
 	}
+
+	metrics.AuthSuccess.Add(ctx, 1)
 
 	return accessesToken, nil
 }

@@ -18,7 +18,7 @@ func (c *Controller) PostAuth(ctx *gin.Context) {
 
 	token, err := c.uc.CreateToken(ctx, req)
 	if err != nil {
-		ctx.AbortWithStatusJSON(c.HandleError(err))
+		ctx.AbortWithStatusJSON(c.HandleError(ctx, err))
 		return
 	}
 
