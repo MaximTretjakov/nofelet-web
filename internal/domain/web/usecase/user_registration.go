@@ -4,10 +4,13 @@ import (
 	"context"
 	"errors"
 
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/MaximTretjakov/nofelet-web/internal/domain/web/dto"
 	"github.com/MaximTretjakov/nofelet-web/internal/v1/view"
+	"github.com/MaximTretjakov/nofelet-web/middleware/metrics"
 )
 
 var (
@@ -41,8 +44,15 @@ func (uc *UseCase) UserRegistration(
 
 	_, err = uc.User.CreateUser(ctx, req.Login, hashedPassword, req.Name)
 	if err != nil {
+		metrics.UserCreationFail.Add(
+			ctx,
+			1,
+			metric.WithAttributes(attribute.String("reason", err.Error())),
+		)
 		return dto.UserRegistrationResponse{}, err
 	}
+
+	metrics.UserCreationSuccess.Add(ctx, 1)
 
 	return dto.UserRegistrationResponse{}, nil
 }
