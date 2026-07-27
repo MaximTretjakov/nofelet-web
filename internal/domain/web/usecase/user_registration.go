@@ -53,6 +53,7 @@ func (uc *UseCase) UserRegistration(
 	}
 
 	metrics.UserCreationSuccess.Add(ctx, 1)
+	metrics.RegisterSuccess.Add(ctx, 1)
 
 	return dto.UserRegistrationResponse{}, nil
 }
